@@ -1,13 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Search, Download, Check, X, AlertCircle, AlertTriangle, TableProperties, FileText, ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { AppShell } from "@/components/app-shell";
+import { TopNav } from "@/components/top-nav";
 import { SideBySidePane } from "@/components/side-by-side-pane";
 import { useStatementStore } from "@/lib/statement-store";
 import { formatAmount } from "@/lib/pdf/detect-currency";
 import { getConfidenceTier } from "@/lib/pdf/confidence";
 import { cn } from "@/lib/utils";
 import type { Transaction } from "@/lib/statement-store";
+
 
 export const Route = createFileRoute("/preview")({
   head: () => ({
