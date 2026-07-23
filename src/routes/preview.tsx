@@ -71,28 +71,35 @@ function PreviewPage() {
   if (statements.length === 0) return null;
 
   return (
-    <AppShell fullWidth>
-      <div className="space-y-3">
-        {/* Dark stat strip -- transaction totals + the primary Export action,
-            replacing the old light summary cards + separate bottom bar. */}
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg bg-ink px-4 py-3 text-background">
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
-            <StatItem label="Transactions" value={rows.length.toString()} />
-            <StatItem label="Credits" value={formatAmount(credits, currency)} tone="pos" />
-            <StatItem label="Debits" value={formatAmount(debits, currency)} tone="neg" />
-            <StatItem
-              label="Closing bal."
-              value={lastWithBalance ? formatAmount(lastWithBalance.balance!, currency) : "—"}
-            />
-            <StatItem label="Flagged" value={flaggedCount.toString()} tone={flaggedCount > 0 ? "warn" : undefined} />
+    <div className="flex h-screen flex-col overflow-hidden bg-surface-muted/40">
+      <TopNav />
+      <div className="flex min-h-0 flex-1 flex-col">
+        {/* Sticky header: metrics + Export */}
+        <div className="flex-none border-b border-border">
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-ink px-4 py-3 text-background sm:px-5">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+              <StatItem label="Transactions" value={rows.length.toString()} />
+              <StatItem label="Credits" value={formatAmount(credits, currency)} tone="pos" />
+              <StatItem label="Debits" value={formatAmount(debits, currency)} tone="neg" />
+              <StatItem
+                label="Closing bal."
+                value={lastWithBalance ? formatAmount(lastWithBalance.balance!, currency) : "—"}
+              />
+              <StatItem label="Flagged" value={flaggedCount.toString()} tone={flaggedCount > 0 ? "warn" : undefined} />
+            </div>
+            <Link
+              to="/export"
+              className="inline-flex items-center gap-2 rounded-md bg-emerald px-3.5 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-emerald/90"
+            >
+              <Download className="h-4 w-4" /> Export
+            </Link>
           </div>
-          <Link
-            to="/export"
-            className="inline-flex items-center gap-2 rounded-md bg-emerald px-3.5 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-emerald/90"
-          >
-            <Download className="h-4 w-4" /> Export
-          </Link>
         </div>
+
+        {/* Scrollable workspace */}
+        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="space-y-3 px-4 py-3 sm:px-5">
+
 
         {/* Shared toolbar: view toggle + search + filters + row count */}
         <div className="flex flex-wrap items-center justify-between gap-3">
