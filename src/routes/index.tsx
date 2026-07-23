@@ -126,11 +126,12 @@ function Landing() {
 
           <ScrollReveal className="mt-8 text-center" delay={0.3}>
             <Link
-              to="/pricing"
+              to="/signin"
               className="inline-flex items-center gap-1 text-sm font-semibold text-emerald hover:underline"
             >
-              Need more than the free tier? See Pro pricing <ArrowRight className="h-4 w-4" />
+              Start free with 10 pages <ArrowRight className="h-4 w-4" />
             </Link>
+
           </ScrollReveal>
         </div>
       </section>
