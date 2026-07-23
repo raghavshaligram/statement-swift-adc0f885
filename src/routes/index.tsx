@@ -11,7 +11,7 @@ import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { ScrollReveal, ScrollRevealGroup, ScrollRevealItem } from "@/components/scroll-reveal";
 import { HeroDemo } from "@/components/hero-demo";
 import { TransactionSideBySide } from "@/components/transaction-side-by-side";
-import { DropVisual, ParseVisual, ExportVisual } from "@/components/how-it-works-icons";
+import { HowItWorksTimeline } from "@/components/how-it-works-timeline";
 import { CapabilityGrid } from "@/components/capability-grid";
 import { ComparisonSection } from "@/components/comparison-section";
 import { HomepageFaq } from "@/components/homepage-faq";
@@ -117,42 +117,8 @@ function Landing() {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="border-b border-border py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <ScrollReveal className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-              From messy PDF to clean spreadsheet in three steps
-            </h2>
-          </ScrollReveal>
-          <ScrollRevealGroup className="mt-14 grid gap-6 lg:grid-cols-3">
-            <ScrollRevealItem className="h-full">
-              <StepCard
-                n={1}
-                visual={<DropVisual />}
-                title="Drop your statement"
-                body="Drag one or many PDF statements into LedgerLocal. Multi-account bundles are handled automatically."
-              />
-            </ScrollRevealItem>
-            <ScrollRevealItem className="h-full">
-              <StepCard
-                n={2}
-                visual={<ParseVisual />}
-                title="Parses on your device"
-                body="Every page is read and matched locally in your browser with a deterministic layout parser — nothing is sent to a server, ever."
-              />
-            </ScrollRevealItem>
-            <ScrollRevealItem className="h-full">
-              <StepCard
-                n={3}
-                visual={<ExportVisual />}
-                title="Download clean data"
-                body="Excel, CSV, Tally XML, OFX, QIF, QBO. Drop straight into QuickBooks, Xero, Tally or your ledger."
-              />
-            </ScrollRevealItem>
-          </ScrollRevealGroup>
-        </div>
-      </section>
+      {/* HOW IT WORKS — animated 4-step timeline */}
+      <HowItWorksTimeline />
 
       {/* REVIEW EVERY TRANSACTION, SIDE BY SIDE */}
       <TransactionSideBySide />
