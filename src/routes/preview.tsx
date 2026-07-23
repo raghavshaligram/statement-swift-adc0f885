@@ -176,7 +176,7 @@ function PreviewPage() {
               <tr className="border-y border-border bg-surface-muted/60 text-left text-sm font-semibold text-muted-foreground">
                 <th className="w-10 px-2 py-2"><input type="checkbox" /></th>
                 <th className="px-2 py-2"><span className="inline-flex items-center gap-1">Date <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
-                <th className="px-2 py-2"><span className="inline-flex items-center gap-1">Description <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="w-full px-2 py-2"><span className="inline-flex items-center gap-1">Description <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
                 <th className="px-2 py-2 text-right"><span className="inline-flex items-center gap-1">Debit <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
                 <th className="px-2 py-2 text-right"><span className="inline-flex items-center gap-1">Credit <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
                 <th className="px-2 py-2 text-right"><span className="inline-flex items-center gap-1">Balance <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
