@@ -15,6 +15,7 @@ import {
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { ScrollReveal, ScrollRevealGroup, ScrollRevealItem } from "@/components/scroll-reveal";
 import { StatementDropzone } from "@/components/statement-dropzone";
+import { ParseQueue } from "@/components/parse-queue";
 import { HowItWorksTimeline } from "@/components/how-it-works-timeline";
 import { TransactionSideBySide } from "@/components/transaction-side-by-side";
 import { CapabilityGrid } from "@/components/capability-grid";
@@ -381,19 +382,21 @@ function Landing() {
 
 function HeroUploadCard() {
   const navigate = useNavigate();
+  const phase = useStatementStore((s) => s.phase);
+  const pendingFiles = useStatementStore((s) => s.pendingFiles);
   const reset = useStatementStore((s) => s.reset);
+  const removePendingFile = useStatementStore((s) => s.removePendingFile);
   const setPendingFiles = useStatementStore((s) => s.setPendingFiles);
   const startProcessing = useStatementStore((s) => s.startProcessing);
   const setProgress = useStatementStore((s) => s.setProgress);
   const finishProcessing = useStatementStore((s) => s.finishProcessing);
   const failProcessing = useStatementStore((s) => s.failProcessing);
-  const [liveFileName, setLiveFileName] = useState("");
+  const [, setLiveFileName] = useState("");
 
   async function handleFiles(files: File[]) {
     reset();
     setPendingFiles(files);
     startProcessing();
-    navigate({ to: "/upload" });
     const parsed = [];
     try {
       for (let i = 0; i < files.length; i++) {
@@ -404,25 +407,53 @@ function HeroUploadCard() {
         parsed.push(statement);
       }
       finishProcessing(parsed);
-      navigate({ to: "/preview" });
     } catch (err) {
       failProcessing(err instanceof Error ? err.message : "Something went wrong while parsing.");
     }
   }
 
+  const showQueue = phase !== "idle" && pendingFiles.length > 0;
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-2 shadow-lg shadow-slate-900/5">
-      <div className="absolute right-4 top-4 hidden text-emerald/20 sm:block" aria-hidden>
-        <Upload className="h-16 w-16 animate-bounce-slow" />
-      </div>
-      <StatementDropzone variant="full" onFiles={handleFiles} className="border-2 border-dashed border-border/80 bg-surface/50" />
-      <div className="mt-3 px-4 pb-3 text-center text-xs text-muted-foreground">
-        PDF only · Up to 6 pages · Unlimited Conversions
-      </div>
+      {!showQueue && (
+        <div className="absolute right-4 top-4 hidden text-emerald/20 sm:block" aria-hidden>
+          <Upload className="h-16 w-16 animate-bounce-slow" />
+        </div>
+      )}
+      {showQueue ? (
+        <>
+          <ParseQueue
+            onReview={() => navigate({ to: "/preview" })}
+            onRemove={(i) => removePendingFile(i)}
+          />
+          {(phase === "done" || phase === "error") && (
+            <div className="px-3 pb-3 pt-1 text-center">
+              <button
+                onClick={() => reset()}
+                className="text-xs font-medium text-muted-foreground hover:text-ink"
+              >
+                Convert another statement
+              </button>
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          <StatementDropzone
+            variant="full"
+            onFiles={handleFiles}
+            className="border-2 border-dashed border-border/80 bg-surface/50"
+          />
+          <div className="mt-3 px-4 pb-3 text-center text-xs text-muted-foreground">
+            PDF only · Up to 6 pages · Unlimited Conversions
+          </div>
+        </>
+      )}
     </div>
   );
 }
+
 
 function TrustPill({ icon: Icon, label }: { icon: any; label: string }) {
   return (
