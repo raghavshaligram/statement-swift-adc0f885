@@ -220,7 +220,7 @@ function PreviewPage() {
                         className="font-mono text-xs text-ink"
                       />
                     </td>
-                    <td className="w-full px-2 py-1.5">
+                    <td className="min-w-0 px-2 py-1.5">
                       <div className="flex items-center gap-2">
                         {flagged && (
                           <span title="Low confidence — please verify">
