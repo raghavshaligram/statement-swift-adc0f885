@@ -177,6 +177,14 @@ function PreviewPage() {
         </div>
         )}
 
+        {warnings.length > 0 && (
+          <div className="flex items-start gap-2 rounded-md border border-amber-300/60 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+            <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+            <span>{warnings.join(" · ")}</span>
+          </div>
+        )}
+
+
         {view === "table" ? (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
