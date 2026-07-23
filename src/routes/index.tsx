@@ -379,6 +379,7 @@ function Landing() {
 }
 
 function HeroUploadCard() {
+  const navigate = useNavigate();
   const reset = useStatementStore((s) => s.reset);
   const setPendingFiles = useStatementStore((s) => s.setPendingFiles);
   const startProcessing = useStatementStore((s) => s.startProcessing);
@@ -391,6 +392,7 @@ function HeroUploadCard() {
     reset();
     setPendingFiles(files);
     startProcessing();
+    navigate({ to: "/upload" });
     const parsed = [];
     try {
       for (let i = 0; i < files.length; i++) {
@@ -401,10 +403,12 @@ function HeroUploadCard() {
         parsed.push(statement);
       }
       finishProcessing(parsed);
+      navigate({ to: "/preview" });
     } catch (err) {
       failProcessing(err instanceof Error ? err.message : "Something went wrong while parsing.");
     }
   }
+
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-2 shadow-lg shadow-slate-900/5">
