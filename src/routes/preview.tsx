@@ -71,13 +71,11 @@ function PreviewPage() {
 
   return (
     <AppShell>
-      <div className="space-y-4">
-
-
+      <div className="space-y-3">
         {/* Dark stat strip -- transaction totals + the primary Export action,
             replacing the old light summary cards + separate bottom bar. */}
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-ink px-5 py-4 text-background">
-          <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg bg-ink px-4 py-3 text-background">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
             <StatItem label="Transactions" value={rows.length.toString()} />
             <StatItem label="Credits" value={formatAmount(credits, currency)} tone="pos" />
             <StatItem label="Debits" value={formatAmount(debits, currency)} tone="neg" />
@@ -89,16 +87,16 @@ function PreviewPage() {
           </div>
           <Link
             to="/export"
-            className="inline-flex items-center gap-2 rounded-md bg-emerald px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-emerald/90"
+            className="inline-flex items-center gap-2 rounded-md bg-emerald px-3.5 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-emerald/90"
           >
             <Download className="h-4 w-4" /> Export
           </Link>
         </div>
 
         {/* Shared toolbar: view toggle + search + filters + row count */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-1">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-0.5 rounded-lg border border-border bg-card p-1">
+            <div className="flex items-center gap-0.5 rounded-lg border border-border bg-card p-0.5">
               {(
                 [
                   ["table", "Table", TableProperties],
@@ -109,7 +107,7 @@ function PreviewPage() {
                   key={id}
                   onClick={() => setView(id)}
                   className={cn(
-                    "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors",
+                    "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors",
                     view === id ? "bg-surface-muted text-ink" : "text-muted-foreground hover:text-ink"
                   )}
                 >
@@ -123,10 +121,10 @@ function PreviewPage() {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Search…"
-                className="w-full rounded-md border border-border bg-card py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald"
+                className="w-full rounded-md border border-border bg-card py-1.5 pl-9 pr-3 text-sm outline-none focus:border-emerald"
               />
             </div>
-            <div className="inline-flex items-center gap-1 rounded-lg border border-border bg-card p-1">
+            <div className="inline-flex items-center gap-1 rounded-lg border border-border bg-card p-0.5">
               {(
                 [
                   ["all", "All"],
@@ -139,7 +137,7 @@ function PreviewPage() {
                   key={key}
                   onClick={() => setTab(key)}
                   className={cn(
-                    "rounded-md px-3 py-1.5 text-xs font-semibold transition",
+                    "rounded-md px-2.5 py-1.5 text-xs font-semibold transition",
                     tab === key
                       ? "bg-emerald text-primary-foreground"
                       : "text-muted-foreground hover:text-ink"
@@ -156,7 +154,7 @@ function PreviewPage() {
         </div>
 
         {warnings.length > 0 && (
-          <div className="flex items-start gap-2 rounded-md border border-amber-300/60 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+          <div className="flex items-start gap-2 rounded-md border border-amber-300/60 bg-amber-50 px-3 py-1.5 text-xs text-amber-900">
             <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             <span>{warnings.join(" · ")}</span>
           </div>
@@ -168,14 +166,14 @@ function PreviewPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-y border-border bg-surface-muted/60 text-left text-sm font-semibold text-muted-foreground">
-                <th className="w-10 px-3 py-3"><input type="checkbox" /></th>
-                <th className="px-3 py-3"><span className="inline-flex items-center gap-1">Date <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
-                <th className="px-3 py-3"><span className="inline-flex items-center gap-1">Description <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
-                <th className="px-3 py-3 text-right"><span className="inline-flex items-center gap-1">Debit <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
-                <th className="px-3 py-3 text-right"><span className="inline-flex items-center gap-1">Credit <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
-                <th className="px-3 py-3 text-right"><span className="inline-flex items-center gap-1">Balance <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
-                <th className="px-3 py-3 text-right"><span className="inline-flex items-center gap-1">Conf. <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
-                <th className="w-10 px-3 py-3"></th>
+                <th className="w-10 px-2 py-2"><input type="checkbox" /></th>
+                <th className="px-2 py-2"><span className="inline-flex items-center gap-1">Date <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-2 py-2"><span className="inline-flex items-center gap-1">Description <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-2 py-2 text-right"><span className="inline-flex items-center gap-1">Debit <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-2 py-2 text-right"><span className="inline-flex items-center gap-1">Credit <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-2 py-2 text-right"><span className="inline-flex items-center gap-1">Balance <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-2 py-2 text-right"><span className="inline-flex items-center gap-1">Conf. <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="w-10 px-2 py-2"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -191,10 +189,10 @@ function PreviewPage() {
                       flagged && "border-l-2 border-l-amber-500 bg-amber-50/40"
                     )}
                   >
-                    <td className="px-3 py-2">
+                    <td className="px-2 py-1.5">
                       <input type="checkbox" />
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-2 py-1.5">
                       <EditableCell
                         value={r.date}
                         editing={editing?.id === r.id && editing.field === "date"}
@@ -203,7 +201,7 @@ function PreviewPage() {
                         className="font-mono text-xs text-ink"
                       />
                     </td>
-                    <td className="max-w-[520px] px-3 py-2">
+                    <td className="max-w-[520px] px-2 py-1.5">
                       <div className="flex items-center gap-2">
                         {flagged && (
                           <span title="Low confidence — please verify">
@@ -219,19 +217,19 @@ function PreviewPage() {
                         />
                       </div>
                     </td>
-                    <td className="px-3 py-2 text-right font-mono tabular-nums text-destructive">
+                    <td className="px-2 py-1.5 text-right font-mono tabular-nums text-destructive">
                       {debit !== null ? formatAmount(debit, currency) : <span className="text-muted-foreground/50">–</span>}
                     </td>
-                    <td className="px-3 py-2 text-right font-mono tabular-nums text-emerald">
+                    <td className="px-2 py-1.5 text-right font-mono tabular-nums text-emerald">
                       {credit !== null ? formatAmount(credit, currency) : <span className="text-muted-foreground/50">–</span>}
                     </td>
-                    <td className="px-3 py-2 text-right font-mono tabular-nums text-ink/80">
+                    <td className="px-2 py-1.5 text-right font-mono tabular-nums text-ink/80">
                       {r.balance !== null ? formatAmount(r.balance, currency) : "—"}
                     </td>
-                    <td className="px-3 py-2 text-right">
+                    <td className="px-2 py-1.5 text-right">
                       <ConfidenceBadge score={r.confidence} />
                     </td>
-                    <td className="px-3 py-2 text-right">
+                    <td className="px-2 py-1.5 text-right">
                       <button
                         onClick={() => deleteTransaction(r.sourceFile, r.id)}
                         className="opacity-0 transition group-hover:opacity-100"
@@ -247,20 +245,20 @@ function PreviewPage() {
           </table>
         </div>
         ) : (
-        <div className="rounded-xl bg-surface-muted/40 p-4">
+        <div className="rounded-lg bg-surface-muted/40 p-3">
           <SideBySidePane
             transactions={filtered}
             currency={currency}
             headerLine={statements[0] ? `${statements[0].detectedBank ?? "Statement"} — ${statements[0].fileName}` : undefined}
           />
-          <p className="mt-3 text-center font-mono text-[10px] text-muted-foreground">
+          <p className="mt-2 text-center font-mono text-[10px] text-muted-foreground">
             Showing {filtered.length} of {rows.length} parsed transactions · hover either panel to sync-highlight · switch to Table view to edit
           </p>
         </div>
         )}
 
         {/* Confidence-key legend sticky footer */}
-        <div className="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 border-t border-background/10 bg-ink px-4 py-3 text-xs text-background/80">
+        <div className="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 border-t border-background/10 bg-ink px-4 py-2.5 text-xs text-background/80">
           <div className="flex flex-wrap items-center gap-3">
             <span className="font-mono uppercase tracking-wider text-background/50">confidence</span>
             <span className="inline-flex items-center gap-1 rounded-full border border-emerald/30 bg-emerald-soft px-2 py-0.5 font-mono text-[10px] font-semibold text-accent-foreground">
