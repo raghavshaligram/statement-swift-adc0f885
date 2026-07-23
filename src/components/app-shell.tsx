@@ -19,9 +19,9 @@ export function AppShell({
   return (
     <div className="min-h-screen bg-surface-muted/40">
       <TopNav />
-      <div className="mx-auto max-w-7xl px-6 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-5">
         {(title || toolbar) && (
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
             {title ? (
               <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">{title}</h1>
             ) : <span />}
