@@ -70,21 +70,9 @@ function PreviewPage() {
   if (statements.length === 0) return null;
 
   return (
-    <AppShell title="Preview & edit transactions">
+    <AppShell>
       <div className="space-y-4">
-        {warnings.length > 0 && (
-          <div className="space-y-2">
-            {warnings.map((w, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900"
-              >
-                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>{w}</span>
-              </div>
-            ))}
-          </div>
-        )}
+
 
         {/* Dark stat strip -- transaction totals + the primary Export action,
             replacing the old light summary cards + separate bottom bar. */}
@@ -189,6 +177,14 @@ function PreviewPage() {
         </div>
         )}
 
+        {warnings.length > 0 && (
+          <div className="flex items-start gap-2 rounded-md border border-amber-300/60 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+            <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+            <span>{warnings.join(" · ")}</span>
+          </div>
+        )}
+
+
         {view === "table" ? (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -229,7 +225,7 @@ function PreviewPage() {
                         className="font-mono text-xs text-ink"
                       />
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="max-w-[520px] px-3 py-2">
                       <div className="flex items-center gap-2">
                         {flagged && (
                           <span title="Low confidence — please verify">
@@ -241,7 +237,7 @@ function PreviewPage() {
                           editing={editing?.id === r.id && editing.field === "description"}
                           onEdit={() => setEditing({ id: r.id, field: "description" })}
                           onCommit={(v) => { update(r, "description", v); setEditing(null); }}
-                          className="text-ink"
+                          className="block max-w-full truncate whitespace-nowrap text-ink"
                         />
                       </div>
                     </td>

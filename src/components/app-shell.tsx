@@ -12,7 +12,7 @@ export function AppShell({
   children,
   toolbar,
 }: {
-  title: string;
+  title?: string;
   children: ReactNode;
   toolbar?: ReactNode;
 }) {
@@ -20,11 +20,15 @@ export function AppShell({
     <div className="min-h-screen bg-surface-muted/40">
       <TopNav />
       <div className="mx-auto max-w-7xl px-6 py-8">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">{title}</h1>
-          {toolbar}
-        </div>
-        <main className="mt-6">{children}</main>
+        {(title || toolbar) && (
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            {title ? (
+              <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">{title}</h1>
+            ) : <span />}
+            {toolbar}
+          </div>
+        )}
+        <main>{children}</main>
       </div>
     </div>
   );
