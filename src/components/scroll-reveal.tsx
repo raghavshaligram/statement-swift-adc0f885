@@ -19,6 +19,13 @@ export const fadeUpVariants: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
+export function fadeUpWithDelay(delay = 0): Variants {
+  return {
+    hidden: { opacity: 0, y: 24 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut", delay } },
+  };
+}
+
 export const staggerContainerVariants: Variants = {
   hidden: {},
   show: {
