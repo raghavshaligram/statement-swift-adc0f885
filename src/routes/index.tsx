@@ -16,7 +16,7 @@ import { CapabilityGrid } from "@/components/capability-grid";
 import { ComparisonSection } from "@/components/comparison-section";
 import { HomepageFaq } from "@/components/homepage-faq";
 import { BANK_LABELS } from "@/lib/pdf/bank-detection";
-import type { ReactNode } from "react";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -317,19 +317,3 @@ function TrustPill({ icon: Icon, label }: { icon: any; label: string }) {
   );
 }
 
-function StepCard({
-  n, visual, title, body,
-}: { n: number; visual: ReactNode; title: string; body: string }) {
-  return (
-    <div className="flex h-full flex-col rounded-xl border border-border bg-card p-6">
-      <div className="flex items-center gap-3">
-        {visual}
-        <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Step {n}
-        </div>
-      </div>
-      <h3 className="mt-4 text-lg font-semibold text-ink">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
-    </div>
-  );
-}
