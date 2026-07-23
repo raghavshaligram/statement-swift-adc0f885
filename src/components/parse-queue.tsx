@@ -80,7 +80,7 @@ export function ParseQueue({
                 <div
                   className={cn(
                     "h-full rounded-full bg-emerald transition-[width] duration-300",
-                    isActive && "animate-pulse-soft"
+                    isActive && "animate-pulse"
                   )}
                   style={{ width: `${pct}%` }}
                 />
