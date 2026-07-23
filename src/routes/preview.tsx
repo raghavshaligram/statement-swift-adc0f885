@@ -249,12 +249,12 @@ function PreviewPage() {
         ) : (
         <div className="rounded-xl bg-surface-muted/40 p-4">
           <SideBySidePane
-            transactions={rows}
+            transactions={filtered}
             currency={currency}
             headerLine={statements[0] ? `${statements[0].detectedBank ?? "Statement"} — ${statements[0].fileName}` : undefined}
           />
           <p className="mt-3 text-center font-mono text-[10px] text-muted-foreground">
-            Showing all {rows.length} parsed transactions · hover either panel to sync-highlight · switch to Table view to edit
+            Showing {filtered.length} of {rows.length} parsed transactions · hover either panel to sync-highlight · switch to Table view to edit
           </p>
         </div>
         )}
