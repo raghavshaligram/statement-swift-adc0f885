@@ -264,9 +264,11 @@ function PreviewPage() {
           </p>
         </div>
         )}
+          </div>
+        </div>
 
-        {/* Confidence-key legend sticky footer */}
-        <div className="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 border-t border-background/10 bg-ink px-4 py-2.5 text-xs text-background/80">
+        {/* Sticky bottom legend */}
+        <div className="flex-none flex flex-wrap items-center justify-between gap-3 border-t border-background/10 bg-ink px-4 py-2.5 text-xs text-background/80 sm:px-5">
           <div className="flex flex-wrap items-center gap-3">
             <span className="font-mono uppercase tracking-wider text-background/50">confidence</span>
             <span className="inline-flex items-center gap-1 rounded-full border border-emerald/30 bg-emerald-soft px-2 py-0.5 font-mono text-[10px] font-semibold text-accent-foreground">
@@ -283,11 +285,11 @@ function PreviewPage() {
             {view === "table" ? "double-click any cell to edit" : "side-by-side — read-only · switch to Table to edit"}
           </span>
         </div>
-
       </div>
-    </AppShell>
+    </div>
   );
 }
+
 
 function StatItem({ label, value, tone }: { label: string; value: string; tone?: "pos" | "neg" | "warn" }) {
   return (
