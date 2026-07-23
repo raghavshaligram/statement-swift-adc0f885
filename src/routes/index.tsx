@@ -125,13 +125,13 @@ function Landing() {
           </ScrollReveal>
 
           <ScrollReveal className="mt-8 text-center" delay={0.3}>
+            <span className="text-sm text-muted-foreground">Need more than the demo? </span>
             <Link
               to="/signin"
               className="inline-flex items-center gap-1 text-sm font-semibold text-emerald hover:underline"
             >
               Start free with 10 pages <ArrowRight className="h-4 w-4" />
             </Link>
-
           </ScrollReveal>
         </div>
       </section>
