@@ -10,9 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UploadRouteImport } from './routes/upload'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PreviewRouteImport } from './routes/preview'
 import { Route as IciciBankStatementToExcelRouteImport } from './routes/icici-bank-statement-to-excel'
@@ -28,6 +30,11 @@ const UploadRoute = UploadRouteImport.update({
   path: '/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -41,6 +48,11 @@ const SignupRoute = SignupRouteImport.update({
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -101,9 +113,11 @@ export interface FileRoutesByFullPath {
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
 }
 export interface FileRoutesByTo {
@@ -116,9 +130,11 @@ export interface FileRoutesByTo {
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
 }
 export interface FileRoutesById {
@@ -132,9 +148,11 @@ export interface FileRoutesById {
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
 }
 export interface FileRouteTypes {
@@ -149,9 +167,11 @@ export interface FileRouteTypes {
     | '/icici-bank-statement-to-excel'
     | '/preview'
     | '/pricing'
+    | '/privacy'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/terms'
     | '/upload'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -164,9 +184,11 @@ export interface FileRouteTypes {
     | '/icici-bank-statement-to-excel'
     | '/preview'
     | '/pricing'
+    | '/privacy'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/terms'
     | '/upload'
   id:
     | '__root__'
@@ -179,9 +201,11 @@ export interface FileRouteTypes {
     | '/icici-bank-statement-to-excel'
     | '/preview'
     | '/pricing'
+    | '/privacy'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
+    | '/terms'
     | '/upload'
   fileRoutesById: FileRoutesById
 }
@@ -195,9 +219,11 @@ export interface RootRouteChildren {
   IciciBankStatementToExcelRoute: typeof IciciBankStatementToExcelRoute
   PreviewRoute: typeof PreviewRoute
   PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsRoute: typeof TermsRoute
   UploadRoute: typeof UploadRoute
 }
 
@@ -208,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/upload'
       fullPath: '/upload'
       preLoaderRoute: typeof UploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -229,6 +262,13 @@ declare module '@tanstack/react-router' {
       path: '/signin'
       fullPath: '/signin'
       preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -307,9 +347,11 @@ const rootRouteChildren: RootRouteChildren = {
   IciciBankStatementToExcelRoute: IciciBankStatementToExcelRoute,
   PreviewRoute: PreviewRoute,
   PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsRoute: TermsRoute,
   UploadRoute: UploadRoute,
 }
 export const routeTree = rootRouteImport
