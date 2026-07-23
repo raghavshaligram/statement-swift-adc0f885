@@ -93,9 +93,9 @@ export function SiteFooter() {
         <div>
           <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-ink">Company</div>
           <ul className="space-y-2">
-            <li><a href="#" className="hover:text-ink">Privacy (on-device)</a></li>
-            <li><a href="#" className="hover:text-ink">Security</a></li>
-            <li><a href="#" className="hover:text-ink">Contact</a></li>
+            <li><Link to="/privacy" className="hover:text-ink">Privacy policy</Link></li>
+            <li><Link to="/terms" className="hover:text-ink">Terms & conditions</Link></li>
+            <li><a href="mailto:hello@ledgerlocal.app" className="hover:text-ink">Contact</a></li>
           </ul>
         </div>
       </div>
