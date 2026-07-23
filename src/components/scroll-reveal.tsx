@@ -38,9 +38,11 @@ const viewport = { once: true, margin: "-80px" } as const;
 export function ScrollReveal({
   children,
   className,
+  delay,
 }: {
   children: ReactNode;
   className?: string;
+  delay?: number;
 }) {
   return (
     <motion.div
@@ -48,7 +50,7 @@ export function ScrollReveal({
       initial="hidden"
       whileInView="show"
       viewport={viewport}
-      variants={fadeUpVariants}
+      variants={delay ? fadeUpWithDelay(delay) : fadeUpVariants}
     >
       {children}
     </motion.div>
