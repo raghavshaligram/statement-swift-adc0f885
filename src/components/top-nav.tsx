@@ -12,11 +12,9 @@ import { FileSpreadsheet, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { to: "/", label: "Landing" },
   { to: "/upload", label: "Upload" },
   { to: "/preview", label: "Preview" },
   { to: "/export", label: "Export" },
-  { to: "/pricing", label: "Pricing" },
 ] as const;
 
 export function TopNav() {
