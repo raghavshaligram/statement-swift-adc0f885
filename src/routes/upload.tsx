@@ -82,51 +82,36 @@ function UploadPage() {
   return (
     <AppShell title="Convert statements">
       <div className="mx-auto max-w-4xl space-y-6">
+        <StatementDropzone variant="full" onFiles={handleFiles} />
+
         {!showQueue && (
-          <>
-            <StatementDropzone variant="full" onFiles={handleFiles} />
-
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <label htmlFor="ocr-language">If a scanned statement is dropped, read it as:</label>
-              <select
-                id="ocr-language"
-                value={ocrLanguage}
-                onChange={(e) => setOcrLanguage(e.target.value)}
-                className="rounded-md border border-border bg-background px-2 py-1 text-xs text-ink"
-              >
-                {OCR_LANGUAGES.map((l) => (
-                  <option key={l.code} value={l.code}>
-                    {l.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {pageLimitError && (
-              <div className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-                <div className="flex-1 text-sm text-amber-900">
-                  {pageLimitError}
-                  <Link to="/pricing" className="ml-2 font-semibold text-amber-900 underline hover:no-underline">
-                    See Pro plans →
-                  </Link>
-                </div>
-              </div>
-            )}
-
-            <div className="grid gap-3 sm:grid-cols-3">
-              {[
-                ["Multi-bank bundles", "Drop statements from different banks together."],
-                ["Global bank coverage", "Chase, BofA, Wells Fargo, ICICI, HDFC, SBI and more."],
-                ["Text-based PDFs", "Works with any statement pdf.js can read text from."],
-              ].map(([t, b]) => (
-                <div key={t} className="rounded-lg border border-border bg-card p-4">
-                  <div className="text-sm font-semibold text-ink">{t}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">{b}</div>
-                </div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <label htmlFor="ocr-language">If a scanned statement is dropped, read it as:</label>
+            <select
+              id="ocr-language"
+              value={ocrLanguage}
+              onChange={(e) => setOcrLanguage(e.target.value)}
+              className="rounded-md border border-border bg-background px-2 py-1 text-xs text-ink"
+            >
+              {OCR_LANGUAGES.map((l) => (
+                <option key={l.code} value={l.code}>
+                  {l.label}
+                </option>
               ))}
+            </select>
+          </div>
+        )}
+
+        {pageLimitError && (
+          <div className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+            <div className="flex-1 text-sm text-amber-900">
+              {pageLimitError}
+              <Link to="/pricing" className="ml-2 font-semibold text-amber-900 underline hover:no-underline">
+                See Pro plans →
+              </Link>
             </div>
-          </>
+          </div>
         )}
 
         {showQueue && (
@@ -147,7 +132,23 @@ function UploadPage() {
             )}
           </div>
         )}
+
+        {!showQueue && (
+          <div className="grid gap-3 sm:grid-cols-3">
+            {[
+              ["Multi-bank bundles", "Drop statements from different banks together."],
+              ["Global bank coverage", "Chase, BofA, Wells Fargo, ICICI, HDFC, SBI and more."],
+              ["Text-based PDFs", "Works with any statement pdf.js can read text from."],
+            ].map(([t, b]) => (
+              <div key={t} className="rounded-lg border border-border bg-card p-4">
+                <div className="text-sm font-semibold text-ink">{t}</div>
+                <div className="mt-1 text-xs text-muted-foreground">{b}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </AppShell>
   );
 }
+
