@@ -91,7 +91,7 @@ function Landing() {
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
               Drop a PDF below and watch your transactions appear — parsed entirely in your
-              browser, in seconds. No signup, no upload, works with banks in the US, UK, Canada,
+              browser, in seconds. No signup, no credit card, works with banks in the US, UK, Canada,
               India and beyond.
             </p>
           </ScrollReveal>
@@ -352,7 +352,7 @@ function Landing() {
       <section className="border-b border-border py-20">
         <div className="mx-auto max-w-3xl px-6 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-            Try it now. No signup, no upload.
+            Try it now. No signup, no credit card.
           </h2>
           <p className="mt-4 text-muted-foreground">
             Convert your first statements free. Upgrade to Pro for unlimited pages — one flat price,
