@@ -15,6 +15,7 @@ import {
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { ScrollReveal, ScrollRevealGroup, ScrollRevealItem } from "@/components/scroll-reveal";
 import { StatementDropzone } from "@/components/statement-dropzone";
+import { ParseQueue } from "@/components/parse-queue";
 import { HowItWorksTimeline } from "@/components/how-it-works-timeline";
 import { TransactionSideBySide } from "@/components/transaction-side-by-side";
 import { CapabilityGrid } from "@/components/capability-grid";
