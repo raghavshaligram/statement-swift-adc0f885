@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { TopNav } from "@/components/top-nav";
+import { cn } from "@/lib/utils";
 
 /**
  * Shell for the workflow pages (Upload/Preview/Export). Used to be a
@@ -11,15 +12,22 @@ export function AppShell({
   title,
   children,
   toolbar,
+  fullWidth = false,
 }: {
   title?: string;
   children: ReactNode;
   toolbar?: ReactNode;
+  fullWidth?: boolean;
 }) {
   return (
     <div className="min-h-screen bg-surface-muted/40">
       <TopNav />
-      <div className="mx-auto max-w-7xl px-4 py-5">
+      <div
+        className={cn(
+          "mx-auto px-4 py-5",
+          fullWidth ? "w-full max-w-[1920px]" : "max-w-7xl"
+        )}
+      >
         {(title || toolbar) && (
           <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
             {title ? (

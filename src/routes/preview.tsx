@@ -70,7 +70,7 @@ function PreviewPage() {
   if (statements.length === 0) return null;
 
   return (
-    <AppShell>
+    <AppShell fullWidth>
       <div className="space-y-3">
         {/* Dark stat strip -- transaction totals + the primary Export action,
             replacing the old light summary cards + separate bottom bar. */}
