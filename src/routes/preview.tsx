@@ -193,14 +193,14 @@ function PreviewPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-y border-border bg-surface-muted/60 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <tr className="border-y border-border bg-surface-muted/60 text-left text-sm font-semibold text-muted-foreground">
                 <th className="w-10 px-3 py-3"><input type="checkbox" /></th>
-                <th className="px-3 py-3">Date</th>
-                <th className="px-3 py-3">Description</th>
-                <th className="px-3 py-3 text-right">Debit</th>
-                <th className="px-3 py-3 text-right">Credit</th>
-                <th className="px-3 py-3 text-right">Balance</th>
-                <th className="px-3 py-3 text-right">Conf.</th>
+                <th className="px-3 py-3"><span className="inline-flex items-center gap-1">Date <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-3 py-3"><span className="inline-flex items-center gap-1">Description <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-3 py-3 text-right"><span className="inline-flex items-center gap-1">Debit <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-3 py-3 text-right"><span className="inline-flex items-center gap-1">Credit <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-3 py-3 text-right"><span className="inline-flex items-center gap-1">Balance <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-3 py-3 text-right"><span className="inline-flex items-center gap-1">Conf. <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
                 <th className="w-10 px-3 py-3"></th>
               </tr>
             </thead>
