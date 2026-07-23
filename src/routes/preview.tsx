@@ -70,21 +70,9 @@ function PreviewPage() {
   if (statements.length === 0) return null;
 
   return (
-    <AppShell title="Preview & edit transactions">
+    <AppShell>
       <div className="space-y-4">
-        {warnings.length > 0 && (
-          <div className="space-y-2">
-            {warnings.map((w, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900"
-              >
-                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>{w}</span>
-              </div>
-            ))}
-          </div>
-        )}
+
 
         {/* Dark stat strip -- transaction totals + the primary Export action,
             replacing the old light summary cards + separate bottom bar. */}
