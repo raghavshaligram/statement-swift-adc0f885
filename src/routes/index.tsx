@@ -6,17 +6,24 @@ import {
   Check,
   Upload,
   ArrowRight,
+  ScanLine,
+  Globe,
+  Layers,
+  FileOutput,
+  Shield,
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { ScrollReveal, ScrollRevealGroup, ScrollRevealItem } from "@/components/scroll-reveal";
-import { HeroDemo } from "@/components/hero-demo";
-import { TransactionSideBySide } from "@/components/transaction-side-by-side";
+import { StatementDropzone } from "@/components/statement-dropzone";
 import { HowItWorksTimeline } from "@/components/how-it-works-timeline";
+import { TransactionSideBySide } from "@/components/transaction-side-by-side";
 import { CapabilityGrid } from "@/components/capability-grid";
 import { ComparisonSection } from "@/components/comparison-section";
 import { HomepageFaq } from "@/components/homepage-faq";
 import { BANK_LABELS } from "@/lib/pdf/bank-detection";
-
+import { useStatementStore } from "@/lib/statement-store";
+import { parseStatementFile } from "@/lib/pdf/parse-statement";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,46 +44,113 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-// Source of truth: only banks with real text-signature detection in
-// bank-detection.ts. Do not add banks here that aren't actually detected —
-// this list is what the homepage claims support for, so it must match reality.
 const banks = Object.values(BANK_LABELS).filter((label) => !label.startsWith("Unrecognized"));
+
+const FEATURES = [
+  {
+    icon: Shield,
+    title: "Private & Secure",
+    body: "Your statement never leaves your device. No server upload, no logs, no retention.",
+  },
+  {
+    icon: ScanLine,
+    title: "Scans & Photos",
+    body: "Built-in OCR reads scanned PDF statements and phone-photo PDFs so you can digitize paper too.",
+  },
+  {
+    icon: Globe,
+    title: "Any Bank",
+    body: "Named profiles for Chase, BofA, Wells Fargo, ICICI, HDFC, SBI, Axis, Kotak and more.",
+  },
+  {
+    icon: Layers,
+    title: "Multi-Account",
+    body: "Drop several PDFs from different accounts or banks and convert them together in one pass.",
+  },
+  {
+    icon: FileOutput,
+    title: "Every Format",
+    body: "Excel (.xlsx), CSV, Tally XML, OFX, QIF, QBO — exports for whatever ledger you already use.",
+  },
+];
 
 function Landing() {
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
-      {/* HERO — live in-browser demo, two columns on desktop */}
+      {/* HERO — centered, clean, reference-style layout */}
       <section id="converter" className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0 grid-fintech opacity-60" aria-hidden />
-        <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-emerald-soft/40 to-transparent" aria-hidden />
-        <div className="relative mx-auto max-w-7xl px-6 pb-20 pt-16 lg:pt-24">
-          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-            <ScrollReveal>
-              <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur">
-                <Lock className="h-3 w-3 text-emerald" />
-                100% on-device — nothing ever uploaded
-              </div>
-              <h1 className="mt-6 font-serif text-4xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl">
-                Bank statement to Excel <span className="text-emerald">software</span>
-              </h1>
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Drop a PDF below and watch your transactions appear — parsed entirely in your
-                browser, in seconds. No signup, no upload, works with banks in the US, UK, Canada,
-                India and beyond.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-muted-foreground">
-                <TrustPill icon={Check} label="No signup required" />
-                <TrustPill icon={Lock} label="Processed on your device" />
-                <TrustPill icon={InfinityIcon} label="Unlimited pages on Pro" />
-              </div>
-            </ScrollReveal>
+        <div className="absolute inset-0 grid-fintech opacity-40" aria-hidden />
+        <div className="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-emerald-soft/40 to-transparent" aria-hidden />
+        <div className="relative mx-auto max-w-5xl px-6 pb-12 pt-16 lg:pt-24">
+          <ScrollReveal className="text-center">
+            <h1 className="font-serif text-4xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl">
+              Bank statement to Excel <span className="text-emerald">software</span>
+            </h1>
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              Drop a PDF below and watch your transactions appear — parsed entirely in your
+              browser, in seconds. No signup, no upload, works with banks in the US, UK, Canada,
+              India and beyond.
+            </p>
+          </ScrollReveal>
 
-            <ScrollReveal>
-              <HeroDemo />
-            </ScrollReveal>
-          </div>
+          <ScrollReveal className="mx-auto mt-10 max-w-2xl" delay={0.1}>
+            <HeroUploadCard />
+          </ScrollReveal>
+
+          <ScrollReveal className="mx-auto mt-8 max-w-3xl" delay={0.2}>
+            <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground">
+              <TrustPill icon={Check} label="No signup required" />
+              <TrustPill icon={Lock} label="Bank-grade encryption on-device" />
+              <TrustPill icon={InfinityIcon} label="Unlimited pages on Pro" />
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal className="mx-auto mt-8 max-w-3xl" delay={0.25}>
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-2">
+                <Check className="h-4 w-4 text-emerald" />
+                Any bank, any layout
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <Check className="h-4 w-4 text-emerald" />
+                Reads scans & photos
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <Check className="h-4 w-4 text-emerald" />
+                Exports to Excel, CSV & QuickBooks
+              </span>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal className="mt-8 text-center" delay={0.3}>
+            <Link
+              to="/pricing"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-emerald hover:underline"
+            >
+              Need more than the free tier? See Pro pricing <ArrowRight className="h-4 w-4" />
+            </Link>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* FEATURE CARDS — reference-style row */}
+      <section className="border-b border-border bg-surface-muted/20 py-14">
+        <div className="mx-auto max-w-7xl px-6">
+          <ScrollRevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {FEATURES.map((f) => (
+              <ScrollRevealItem key={f.title}>
+                <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-5 text-center transition hover:border-emerald/30 hover:shadow-sm">
+                  <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-emerald-soft text-emerald">
+                    <f.icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="mt-4 text-sm font-semibold text-ink">{f.title}</h3>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{f.body}</p>
+                </div>
+              </ScrollRevealItem>
+            ))}
+          </ScrollRevealGroup>
         </div>
       </section>
 
@@ -206,13 +280,9 @@ function Landing() {
           </div>
           <ScrollRevealGroup className="mx-auto mt-8 flex max-w-3xl flex-wrap items-center justify-center gap-3">
             {[
-              // TODO: link to /guides/quickbooks-import once written
               "QuickBooks",
-              // TODO: link to /guides/tally-import once written
               "Tally",
-              // TODO: link to /guides/xero-import once written
               "Xero",
-              // TODO: link to /guides/google-sheets-import once written
               "Google Sheets",
             ].map((name) => (
               <ScrollRevealItem key={name}>
@@ -308,6 +378,47 @@ function Landing() {
   );
 }
 
+function HeroUploadCard() {
+  const reset = useStatementStore((s) => s.reset);
+  const setPendingFiles = useStatementStore((s) => s.setPendingFiles);
+  const startProcessing = useStatementStore((s) => s.startProcessing);
+  const setProgress = useStatementStore((s) => s.setProgress);
+  const finishProcessing = useStatementStore((s) => s.finishProcessing);
+  const failProcessing = useStatementStore((s) => s.failProcessing);
+  const [liveFileName, setLiveFileName] = useState("");
+
+  async function handleFiles(files: File[]) {
+    reset();
+    setPendingFiles(files);
+    startProcessing();
+    const parsed = [];
+    try {
+      for (let i = 0; i < files.length; i++) {
+        setLiveFileName(files[i].name);
+        const statement = await parseStatementFile(files[i], (page, total) =>
+          setProgress(i, page, total)
+        );
+        parsed.push(statement);
+      }
+      finishProcessing(parsed);
+    } catch (err) {
+      failProcessing(err instanceof Error ? err.message : "Something went wrong while parsing.");
+    }
+  }
+
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-2 shadow-lg shadow-slate-900/5">
+      <div className="absolute right-4 top-4 hidden text-emerald/20 sm:block" aria-hidden>
+        <Upload className="h-16 w-16 animate-bounce-slow" />
+      </div>
+      <StatementDropzone variant="full" onFiles={handleFiles} className="border-2 border-dashed border-border/80 bg-surface/50" />
+      <div className="mt-3 px-4 pb-3 text-center text-xs text-muted-foreground">
+        PDF only · Up to 10 pages free · Pro unlocks unlimited pages
+      </div>
+    </div>
+  );
+}
+
 function TrustPill({ icon: Icon, label }: { icon: any; label: string }) {
   return (
     <span className="inline-flex items-center gap-1.5">
@@ -316,4 +427,3 @@ function TrustPill({ icon: Icon, label }: { icon: any; label: string }) {
     </span>
   );
 }
-
