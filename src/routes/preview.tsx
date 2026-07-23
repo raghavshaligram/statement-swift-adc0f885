@@ -225,7 +225,7 @@ function PreviewPage() {
                         className="font-mono text-xs text-ink"
                       />
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="max-w-[520px] px-3 py-2">
                       <div className="flex items-center gap-2">
                         {flagged && (
                           <span title="Low confidence — please verify">
@@ -237,7 +237,7 @@ function PreviewPage() {
                           editing={editing?.id === r.id && editing.field === "description"}
                           onEdit={() => setEditing({ id: r.id, field: "description" })}
                           onCommit={(v) => { update(r, "description", v); setEditing(null); }}
-                          className="text-ink"
+                          className="block max-w-full truncate whitespace-nowrap text-ink"
                         />
                       </div>
                     </td>
