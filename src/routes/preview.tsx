@@ -246,13 +246,13 @@ function PreviewPage() {
                       </div>
                     </td>
                     <td className="px-3 py-2 text-right font-mono tabular-nums text-destructive">
-                      {debit !== null ? debit.toFixed(2) : <span className="text-muted-foreground/50">–</span>}
+                      {debit !== null ? formatAmount(debit, currency) : <span className="text-muted-foreground/50">–</span>}
                     </td>
                     <td className="px-3 py-2 text-right font-mono tabular-nums text-emerald">
-                      {credit !== null ? credit.toFixed(2) : <span className="text-muted-foreground/50">–</span>}
+                      {credit !== null ? formatAmount(credit, currency) : <span className="text-muted-foreground/50">–</span>}
                     </td>
                     <td className="px-3 py-2 text-right font-mono tabular-nums text-ink/80">
-                      {r.balance !== null ? r.balance.toFixed(2) : "—"}
+                      {r.balance !== null ? formatAmount(r.balance, currency) : "—"}
                     </td>
                     <td className="px-3 py-2 text-right">
                       <ConfidenceBadge score={r.confidence} />
@@ -261,9 +261,9 @@ function PreviewPage() {
                       <button
                         onClick={() => deleteTransaction(r.sourceFile, r.id)}
                         className="opacity-0 transition group-hover:opacity-100"
-                        aria-label="Delete row"
+                        aria-label="Row actions"
                       >
-                        <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                        <MoreHorizontal className="h-4 w-4 text-muted-foreground hover:text-ink" />
                       </button>
                     </td>
                   </tr>
