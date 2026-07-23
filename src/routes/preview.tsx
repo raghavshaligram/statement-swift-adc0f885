@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Search, Download, Check, X, AlertCircle, AlertTriangle, Trash2, TableProperties, FileText } from "lucide-react";
+import { Search, Download, Check, X, AlertCircle, AlertTriangle, TableProperties, FileText, ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { SideBySidePane } from "@/components/side-by-side-pane";
 import { useStatementStore } from "@/lib/statement-store";
@@ -193,14 +193,14 @@ function PreviewPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-y border-border bg-surface-muted/60 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <tr className="border-y border-border bg-surface-muted/60 text-left text-sm font-semibold text-muted-foreground">
                 <th className="w-10 px-3 py-3"><input type="checkbox" /></th>
-                <th className="px-3 py-3">Date</th>
-                <th className="px-3 py-3">Description</th>
-                <th className="px-3 py-3 text-right">Debit</th>
-                <th className="px-3 py-3 text-right">Credit</th>
-                <th className="px-3 py-3 text-right">Balance</th>
-                <th className="px-3 py-3 text-right">Conf.</th>
+                <th className="px-3 py-3"><span className="inline-flex items-center gap-1">Date <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-3 py-3"><span className="inline-flex items-center gap-1">Description <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-3 py-3 text-right"><span className="inline-flex items-center gap-1">Debit <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-3 py-3 text-right"><span className="inline-flex items-center gap-1">Credit <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-3 py-3 text-right"><span className="inline-flex items-center gap-1">Balance <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="px-3 py-3 text-right"><span className="inline-flex items-center gap-1">Conf. <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
                 <th className="w-10 px-3 py-3"></th>
               </tr>
             </thead>
@@ -246,13 +246,13 @@ function PreviewPage() {
                       </div>
                     </td>
                     <td className="px-3 py-2 text-right font-mono tabular-nums text-destructive">
-                      {debit !== null ? debit.toFixed(2) : <span className="text-muted-foreground/50">–</span>}
+                      {debit !== null ? formatAmount(debit, currency) : <span className="text-muted-foreground/50">–</span>}
                     </td>
                     <td className="px-3 py-2 text-right font-mono tabular-nums text-emerald">
-                      {credit !== null ? credit.toFixed(2) : <span className="text-muted-foreground/50">–</span>}
+                      {credit !== null ? formatAmount(credit, currency) : <span className="text-muted-foreground/50">–</span>}
                     </td>
                     <td className="px-3 py-2 text-right font-mono tabular-nums text-ink/80">
-                      {r.balance !== null ? r.balance.toFixed(2) : "—"}
+                      {r.balance !== null ? formatAmount(r.balance, currency) : "—"}
                     </td>
                     <td className="px-3 py-2 text-right">
                       <ConfidenceBadge score={r.confidence} />
@@ -261,9 +261,9 @@ function PreviewPage() {
                       <button
                         onClick={() => deleteTransaction(r.sourceFile, r.id)}
                         className="opacity-0 transition group-hover:opacity-100"
-                        aria-label="Delete row"
+                        aria-label="Row actions"
                       >
-                        <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                        <MoreHorizontal className="h-4 w-4 text-muted-foreground hover:text-ink" />
                       </button>
                     </td>
                   </tr>
