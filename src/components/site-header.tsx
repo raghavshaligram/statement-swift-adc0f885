@@ -45,13 +45,13 @@ export function SiteHeader() {
             to="/signin"
             className="text-sm font-semibold text-background/85 transition-colors hover:text-background"
           >
-            Sign in
+            Log In
           </Link>
           <Link
             to="/signup"
             className="inline-flex items-center rounded-lg bg-emerald px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-emerald/90"
           >
-            Sign up
+            Sign up for free
           </Link>
         </div>
       </div>

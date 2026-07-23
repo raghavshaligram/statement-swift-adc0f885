@@ -60,13 +60,13 @@ export function TopNav() {
           to="/signin"
           className="text-sm font-medium text-white/80 transition-colors hover:text-white"
         >
-          Sign in
+          Log In
         </Link>
         <Link
           to="/signup"
           className="inline-flex items-center rounded-lg bg-emerald px-4 py-1.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-emerald/90"
         >
-          Sign up
+          Sign up for free
         </Link>
       </div>
     </header>
