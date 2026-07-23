@@ -91,13 +91,13 @@ function PreviewPage() {
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-ink px-5 py-4 text-background">
           <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
             <StatItem label="Transactions" value={rows.length.toString()} />
-            <StatItem label="Total credits" value={formatAmount(credits, currency)} tone="pos" />
-            <StatItem label="Total debits" value={formatAmount(debits, currency)} tone="neg" />
+            <StatItem label="Credits" value={formatAmount(credits, currency)} tone="pos" />
+            <StatItem label="Debits" value={formatAmount(debits, currency)} tone="neg" />
             <StatItem
-              label="Closing balance"
+              label="Closing bal."
               value={lastWithBalance ? formatAmount(lastWithBalance.balance!, currency) : "—"}
             />
-            <StatItem label="Flagged rows" value={flaggedCount.toString()} tone={flaggedCount > 0 ? "warn" : undefined} />
+            <StatItem label="Flagged" value={flaggedCount.toString()} tone={flaggedCount > 0 ? "warn" : undefined} />
           </div>
           <Link
             to="/export"
