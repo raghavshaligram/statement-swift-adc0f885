@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UploadRouteImport } from './routes/upload'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SigninRouteImport } from './routes/signin'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PreviewRouteImport } from './routes/preview'
 import { Route as IciciBankStatementToExcelRouteImport } from './routes/icici-bank-statement-to-excel'
@@ -29,6 +31,16 @@ const UploadRoute = UploadRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -89,6 +101,8 @@ export interface FileRoutesByFullPath {
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/upload': typeof UploadRoute
 }
@@ -102,6 +116,8 @@ export interface FileRoutesByTo {
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/upload': typeof UploadRoute
 }
@@ -116,6 +132,8 @@ export interface FileRoutesById {
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/upload': typeof UploadRoute
 }
@@ -131,6 +149,8 @@ export interface FileRouteTypes {
     | '/icici-bank-statement-to-excel'
     | '/preview'
     | '/pricing'
+    | '/signin'
+    | '/signup'
     | '/sitemap.xml'
     | '/upload'
   fileRoutesByTo: FileRoutesByTo
@@ -144,6 +164,8 @@ export interface FileRouteTypes {
     | '/icici-bank-statement-to-excel'
     | '/preview'
     | '/pricing'
+    | '/signin'
+    | '/signup'
     | '/sitemap.xml'
     | '/upload'
   id:
@@ -157,6 +179,8 @@ export interface FileRouteTypes {
     | '/icici-bank-statement-to-excel'
     | '/preview'
     | '/pricing'
+    | '/signin'
+    | '/signup'
     | '/sitemap.xml'
     | '/upload'
   fileRoutesById: FileRoutesById
@@ -171,6 +195,8 @@ export interface RootRouteChildren {
   IciciBankStatementToExcelRoute: typeof IciciBankStatementToExcelRoute
   PreviewRoute: typeof PreviewRoute
   PricingRoute: typeof PricingRoute
+  SigninRoute: typeof SigninRoute
+  SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   UploadRoute: typeof UploadRoute
 }
@@ -189,6 +215,20 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -267,6 +307,8 @@ const rootRouteChildren: RootRouteChildren = {
   IciciBankStatementToExcelRoute: IciciBankStatementToExcelRoute,
   PreviewRoute: PreviewRoute,
   PricingRoute: PricingRoute,
+  SigninRoute: SigninRoute,
+  SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   UploadRoute: UploadRoute,
 }

@@ -1,11 +1,6 @@
 /**
- * Persistent top navbar for the app's workflow pages (Upload/Preview/Export,
- * via AppShell) plus links back out to Landing/Pricing. Replaces the old
- * sidebar — this app's navigation is linear (Upload -> Preview -> Export),
- * so a fixed top bar covers it without the sidebar's real-estate cost.
- *
- * The active nav pill doubles as the step indicator: there's no separate
- * 1/2/3 badge anymore, whichever link is highlighted green IS the current step.
+ * Persistent top navbar for the app's workflow pages (Upload/Preview/Export).
+ * Nav is centered; brand sits left; auth actions sit right.
  */
 import { Link, useLocation } from "@tanstack/react-router";
 import { FileSpreadsheet, Lock } from "lucide-react";
@@ -21,7 +16,8 @@ export function TopNav() {
   const loc = useLocation();
 
   return (
-    <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between gap-4 border-b border-white/10 bg-ink px-4 sm:px-6">
+    <header className="sticky top-0 z-40 grid h-16 w-full grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-white/10 bg-ink px-4 sm:px-6">
+      {/* Left: brand */}
       <div className="flex min-w-0 items-center gap-3">
         <Link to="/" className="flex shrink-0 items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-md bg-emerald text-primary-foreground">
@@ -35,6 +31,7 @@ export function TopNav() {
         </span>
       </div>
 
+      {/* Center: workflow nav */}
       <nav className="hidden items-center gap-1 md:flex">
         {NAV_LINKS.map((item) => {
           const active = loc.pathname === item.to;
@@ -53,9 +50,24 @@ export function TopNav() {
         })}
       </nav>
 
-      <div className="flex shrink-0 items-center gap-1.5 font-mono text-xs text-white/70">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald" aria-hidden />
-        local
+      {/* Right: local indicator + auth */}
+      <div className="flex shrink-0 items-center justify-end gap-4">
+        <div className="hidden items-center gap-1.5 font-mono text-xs text-white/70 sm:flex">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald" aria-hidden />
+          local
+        </div>
+        <Link
+          to="/signin"
+          className="text-sm font-medium text-white/80 transition-colors hover:text-white"
+        >
+          Sign in
+        </Link>
+        <Link
+          to="/signup"
+          className="inline-flex items-center rounded-lg bg-emerald px-4 py-1.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-emerald/90"
+        >
+          Sign up
+        </Link>
       </div>
     </header>
   );
