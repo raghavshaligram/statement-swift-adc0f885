@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { TopNav } from "@/components/top-nav";
+import { cn } from "@/lib/utils";
 
 /**
  * Shell for the workflow pages (Upload/Preview/Export). Used to be a
