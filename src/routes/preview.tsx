@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Search, Download, Check, X, AlertCircle, AlertTriangle, Trash2, TableProperties, FileText } from "lucide-react";
+import { Search, Download, Check, X, AlertCircle, AlertTriangle, Trash2, TableProperties, FileText, ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { SideBySidePane } from "@/components/side-by-side-pane";
 import { useStatementStore } from "@/lib/statement-store";
