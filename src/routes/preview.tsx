@@ -95,8 +95,7 @@ function PreviewPage() {
           </Link>
         </div>
 
-        {/* Combined toolbar: view toggle + search + filters + row count */}
-        {view === "table" ? (
+        {/* Shared toolbar: view toggle + search + filters + row count */}
         <div className="flex flex-wrap items-center justify-between gap-3 px-1">
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-0.5 rounded-lg border border-border bg-card p-1">
@@ -155,27 +154,6 @@ function PreviewPage() {
             <span className="font-mono">{filtered.length}</span> rows · dbl-click to edit
           </div>
         </div>
-        ) : (
-        <div className="flex items-center gap-0.5 rounded-lg border border-border bg-card p-1 w-fit">
-          {(
-            [
-              ["table", "Table", TableProperties],
-              ["sidebyside", "Side-by-side", FileText],
-            ] as const
-          ).map(([id, label, Icon]) => (
-            <button
-              key={id}
-              onClick={() => setView(id)}
-              className={cn(
-                "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors",
-                view === id ? "bg-surface-muted text-ink" : "text-muted-foreground hover:text-ink"
-              )}
-            >
-              <Icon className="h-3 w-3" /> {label}
-            </button>
-          ))}
-        </div>
-        )}
 
         {warnings.length > 0 && (
           <div className="flex items-start gap-2 rounded-md border border-amber-300/60 bg-amber-50 px-3 py-2 text-xs text-amber-900">
@@ -271,12 +249,12 @@ function PreviewPage() {
         ) : (
         <div className="rounded-xl bg-surface-muted/40 p-4">
           <SideBySidePane
-            transactions={rows}
+            transactions={filtered}
             currency={currency}
             headerLine={statements[0] ? `${statements[0].detectedBank ?? "Statement"} — ${statements[0].fileName}` : undefined}
           />
           <p className="mt-3 text-center font-mono text-[10px] text-muted-foreground">
-            Showing all {rows.length} parsed transactions · hover either panel to sync-highlight · switch to Table view to edit
+            Showing {filtered.length} of {rows.length} parsed transactions · hover either panel to sync-highlight · switch to Table view to edit
           </p>
         </div>
         )}
