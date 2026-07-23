@@ -418,7 +418,7 @@ function HeroUploadCard() {
       </div>
       <StatementDropzone variant="full" onFiles={handleFiles} className="border-2 border-dashed border-border/80 bg-surface/50" />
       <div className="mt-3 px-4 pb-3 text-center text-xs text-muted-foreground">
-        PDF only · Up to 10 pages free · Pro unlocks unlimited pages
+        PDF only · Up to 6 pages · Unlimited Conversions
       </div>
     </div>
   );
