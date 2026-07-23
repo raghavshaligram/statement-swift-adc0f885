@@ -1,13 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Search, Download, Check, X, AlertCircle, AlertTriangle, TableProperties, FileText, ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { AppShell } from "@/components/app-shell";
+import { TopNav } from "@/components/top-nav";
 import { SideBySidePane } from "@/components/side-by-side-pane";
 import { useStatementStore } from "@/lib/statement-store";
 import { formatAmount } from "@/lib/pdf/detect-currency";
 import { getConfidenceTier } from "@/lib/pdf/confidence";
 import { cn } from "@/lib/utils";
 import type { Transaction } from "@/lib/statement-store";
+
 
 export const Route = createFileRoute("/preview")({
   head: () => ({
@@ -70,28 +71,35 @@ function PreviewPage() {
   if (statements.length === 0) return null;
 
   return (
-    <AppShell fullWidth>
-      <div className="space-y-3">
-        {/* Dark stat strip -- transaction totals + the primary Export action,
-            replacing the old light summary cards + separate bottom bar. */}
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg bg-ink px-4 py-3 text-background">
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
-            <StatItem label="Transactions" value={rows.length.toString()} />
-            <StatItem label="Credits" value={formatAmount(credits, currency)} tone="pos" />
-            <StatItem label="Debits" value={formatAmount(debits, currency)} tone="neg" />
-            <StatItem
-              label="Closing bal."
-              value={lastWithBalance ? formatAmount(lastWithBalance.balance!, currency) : "—"}
-            />
-            <StatItem label="Flagged" value={flaggedCount.toString()} tone={flaggedCount > 0 ? "warn" : undefined} />
+    <div className="flex h-screen flex-col overflow-hidden bg-surface-muted/40">
+      <TopNav />
+      <div className="flex min-h-0 flex-1 flex-col">
+        {/* Sticky header: metrics + Export */}
+        <div className="flex-none border-b border-border">
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-ink px-4 py-3 text-background sm:px-5">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+              <StatItem label="Transactions" value={rows.length.toString()} />
+              <StatItem label="Credits" value={formatAmount(credits, currency)} tone="pos" />
+              <StatItem label="Debits" value={formatAmount(debits, currency)} tone="neg" />
+              <StatItem
+                label="Closing bal."
+                value={lastWithBalance ? formatAmount(lastWithBalance.balance!, currency) : "—"}
+              />
+              <StatItem label="Flagged" value={flaggedCount.toString()} tone={flaggedCount > 0 ? "warn" : undefined} />
+            </div>
+            <Link
+              to="/export"
+              className="inline-flex items-center gap-2 rounded-md bg-emerald px-3.5 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-emerald/90"
+            >
+              <Download className="h-4 w-4" /> Export
+            </Link>
           </div>
-          <Link
-            to="/export"
-            className="inline-flex items-center gap-2 rounded-md bg-emerald px-3.5 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-emerald/90"
-          >
-            <Download className="h-4 w-4" /> Export
-          </Link>
         </div>
+
+        {/* Scrollable workspace */}
+        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="space-y-3 px-4 py-3 sm:px-5">
+
 
         {/* Shared toolbar: view toggle + search + filters + row count */}
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -168,7 +176,7 @@ function PreviewPage() {
               <tr className="border-y border-border bg-surface-muted/60 text-left text-sm font-semibold text-muted-foreground">
                 <th className="w-10 px-2 py-2"><input type="checkbox" /></th>
                 <th className="px-2 py-2"><span className="inline-flex items-center gap-1">Date <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
-                <th className="px-2 py-2"><span className="inline-flex items-center gap-1">Description <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
+                <th className="w-full px-2 py-2"><span className="inline-flex items-center gap-1">Description <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
                 <th className="px-2 py-2 text-right"><span className="inline-flex items-center gap-1">Debit <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
                 <th className="px-2 py-2 text-right"><span className="inline-flex items-center gap-1">Credit <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
                 <th className="px-2 py-2 text-right"><span className="inline-flex items-center gap-1">Balance <ArrowUpDown className="h-3 w-3 opacity-50" /></span></th>
@@ -201,7 +209,7 @@ function PreviewPage() {
                         className="font-mono text-xs text-ink"
                       />
                     </td>
-                    <td className="max-w-[520px] px-2 py-1.5">
+                    <td className="w-full px-2 py-1.5">
                       <div className="flex items-center gap-2">
                         {flagged && (
                           <span title="Low confidence — please verify">
@@ -256,9 +264,11 @@ function PreviewPage() {
           </p>
         </div>
         )}
+          </div>
+        </div>
 
-        {/* Confidence-key legend sticky footer */}
-        <div className="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 border-t border-background/10 bg-ink px-4 py-2.5 text-xs text-background/80">
+        {/* Sticky bottom legend */}
+        <div className="flex-none flex flex-wrap items-center justify-between gap-3 border-t border-background/10 bg-ink px-4 py-2.5 text-xs text-background/80 sm:px-5">
           <div className="flex flex-wrap items-center gap-3">
             <span className="font-mono uppercase tracking-wider text-background/50">confidence</span>
             <span className="inline-flex items-center gap-1 rounded-full border border-emerald/30 bg-emerald-soft px-2 py-0.5 font-mono text-[10px] font-semibold text-accent-foreground">
@@ -275,11 +285,11 @@ function PreviewPage() {
             {view === "table" ? "double-click any cell to edit" : "side-by-side — read-only · switch to Table to edit"}
           </span>
         </div>
-
       </div>
-    </AppShell>
+    </div>
   );
 }
+
 
 function StatItem({ label, value, tone }: { label: string; value: string; tone?: "pos" | "neg" | "warn" }) {
   return (
