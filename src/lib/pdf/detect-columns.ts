@@ -138,7 +138,15 @@ export function findHeaderRow(rows: Row[], pageWidth: number): HeaderInfo | null
       if (role) matches.push({ role, label: item.str, x: item.x });
     }
 
-    if (matches.length < 2) continue; // not confident this is the header
+    // Require at least 2 DISTINCT roles, not just any 2 matched tokens --
+    // a real header row has genuinely different columns (date, description,
+    // amount, balance), whereas a summary line like "Opening balance ...
+    // Closing balance" can otherwise falsely satisfy "2 matches" by matching
+    // the same "balance" role twice. Confirmed as a real bug via a real
+    // statement (Chase UK) that has exactly this kind of summary row above
+    // the actual transaction table.
+    const distinctRoles = new Set(matches.map((m) => m.role));
+    if (distinctRoles.size < 2) continue; // not confident this is the header
 
     matches.sort((a, b) => a.x - b.x);
     const columns: DetectedColumn[] = matches.map((m, i) => {

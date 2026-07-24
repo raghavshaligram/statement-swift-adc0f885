@@ -72,14 +72,15 @@ function findDate(
     if (kind === "monthName") {
       // Two possible group orders: "15-Jan-2025" (day, month, year) or
       // "Jan 15, 2025" (month, day, year) -- tell them apart by which group
-      // is the month name. Normalize O/o -> 0 first (see the DATE_PATTERNS
-      // comment on why the regex tolerates that OCR confusion) so isNaN and
-      // the day-number parsing below see a real digit string, not "O1".
-      const g1 = m[1].replace(/[Oo]/g, "0");
-      const g2 = m[2].replace(/[Oo]/g, "0");
-      const isMonthFirst = isNaN(parseInt(g1, 10));
-      const monthStr = isMonthFirst ? g1 : g2;
-      const dayStr = isMonthFirst ? g2 : g1;
+      // is day-like (all digits, or O/o standing in for 0) vs the month
+      // name. Deliberately NOT normalizing O/o in both groups blindly --
+      // "Nov" contains a lowercase "o" that must not be touched, which an
+      // earlier version of this fix got wrong (confirmed on a real
+      // statement: "Nov" became "N0v" and failed the month lookup below).
+      const isG1DayLike = /^[\dOo]+$/.test(m[1]);
+      const isMonthFirst = !isG1DayLike;
+      const monthStr = isMonthFirst ? m[1] : m[2];
+      const dayStr = (isMonthFirst ? m[2] : m[1]).replace(/[Oo]/g, "0");
       const month = MONTHS[monthStr.toLowerCase().slice(0, 3)];
       if (!month) continue;
       return { iso: `${m[3]}-${month}-${dayStr.padStart(2, "0")}`, matchedText: m[0], unambiguous: true };
@@ -115,11 +116,18 @@ function hasDate(text: string): boolean {
 // group before the decimal). Missing the Indian case entirely broke any
 // statement amount >= 1 lakh -- confirmed on the real ICICI statement, where
 // it silently dropped whole transactions with no matched numbers at all.
-const AMOUNT_ITEM_RE = /^\(?-?\$?(?:\d{1,2}(?:,\d{2})+,\d{3}|\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{2})\)?$/;
+//
+// The sign/currency prefix was US-centric ($/- only) -- confirmed as a real
+// bug via a real UK Chase statement using £ and an explicit leading + for
+// credits ("+£0.04", "-£101.99"). Expanded to the same currency symbols
+// already recognized elsewhere in the app (detect-currency.ts) and to allow
+// a leading + as well as -, rather than silently finding zero numbers on
+// every row of a statement that uses either convention.
+const AMOUNT_ITEM_RE = /^\(?[+-]?[$£€¥₹]?(?:\d{1,2}(?:,\d{2})+,\d{3}|\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{2})\)?$/;
 
 function parseAmountToken(token: string): number {
   const negative = /^\(.*\)$/.test(token.trim()) || token.trim().startsWith("-");
-  const cleaned = token.replace(/[()$,\s-]/g, "");
+  const cleaned = token.replace(/[()$£€¥₹,+\s-]/g, "");
   const value = parseFloat(cleaned);
   return negative ? -Math.abs(value) : value;
 }

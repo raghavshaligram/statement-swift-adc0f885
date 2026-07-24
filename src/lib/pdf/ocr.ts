@@ -131,26 +131,44 @@ export async function ocrImageToTextItems(
 
   const img = await decodeImage(file);
   onProgress?.({ sourcePage: 1, totalPages: 1, stage: "rendering", message: "Reading image…" });
-  const canvas = makeCanvas(img.naturalWidth || img.width, img.naturalHeight || img.height);
+
+  const nativeWidth = img.naturalWidth || img.width;
+  const nativeHeight = img.naturalHeight || img.height;
+  // Upscale small images before OCR -- the same principle already used for
+  // PDF pages (RENDER_SCALE), just applied dynamically here since a raw
+  // image upload can arrive at any resolution, unlike a PDF page's fairly
+  // consistent native size. Tesseract's accuracy on small text drops
+  // meaningfully below ~1800px on the longer dimension; a low-res photo or
+  // screenshot (this was confirmed on a real 768x1024 test image) benefits
+  // noticeably from upscaling even though no new detail is added -- larger,
+  // smoother glyphs segment more reliably. Capped at 3x so an already-large
+  // image doesn't get blown up unnecessarily.
+  const longerDimension = Math.max(nativeWidth, nativeHeight);
+  const scale = Math.min(3, Math.max(1, 1800 / longerDimension));
+  const scaledWidth = Math.round(nativeWidth * scale);
+  const scaledHeight = Math.round(nativeHeight * scale);
+
+  const canvas = makeCanvas(scaledWidth, scaledHeight);
   const ctx = canvas.getContext("2d") as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
   if (!ctx) throw new Error("Canvas 2D context unavailable");
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(img as unknown as CanvasImageSource, 0, 0);
+  ctx.drawImage(img as unknown as CanvasImageSource, 0, 0, scaledWidth, scaledHeight);
 
   const worker = await createOcrWorker(langArg, useSelfHostedLang);
   try {
     onProgress?.({ sourcePage: 1, totalPages: 1, stage: "ocr", message: "Running OCR…" });
     const { data } = await worker.recognize(canvas as HTMLCanvasElement, {}, { blocks: true });
     const words = collectWords(data);
+    const inv = 1 / scale; // scale bounding boxes back to the original image's coordinate space
     const items: TextItem[] = [];
     for (const w of words) {
       const text = w.text.replace(/\s+/g, " ").trim();
       if (!text) continue;
-      const width = w.bbox.x1 - w.bbox.x0;
-      const height = w.bbox.y1 - w.bbox.y0;
+      const width = (w.bbox.x1 - w.bbox.x0) * inv;
+      const height = (w.bbox.y1 - w.bbox.y0) * inv;
       if (width <= 0 || height <= 0) continue;
-      items.push({ str: text, x: w.bbox.x0, y: w.bbox.y0, width, height });
+      items.push({ str: text, x: w.bbox.x0 * inv, y: w.bbox.y0 * inv, width, height });
     }
     const rawText = items.map((it) => it.str).join(" ");
     return { items, rawText };
