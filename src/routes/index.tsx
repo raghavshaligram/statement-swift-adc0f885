@@ -80,6 +80,12 @@ const FEATURES = [
 ];
 
 function Landing() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!loading && user) navigate({ to: "/upload", replace: true });
+  }, [user, loading, navigate]);
+  if (loading || user) return <div className="min-h-screen bg-background" />;
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
