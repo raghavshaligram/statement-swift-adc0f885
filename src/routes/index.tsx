@@ -27,7 +27,8 @@ import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
 import { getPdfPageCount } from "@/lib/pdf/extract-text";
 import { ANONYMOUS_MAX_PAGES } from "@/lib/pricing-constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
