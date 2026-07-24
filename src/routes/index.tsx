@@ -111,7 +111,7 @@ function Landing() {
         <div className="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-emerald-soft/40 to-transparent" aria-hidden />
         <div className="relative mx-auto max-w-5xl px-6 pb-12 pt-16 lg:pt-24">
           <ScrollReveal className="text-center">
-            <h1 className="font-serif text-4xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl">
+            <h1 className="font-serif text-3xl font-bold tracking-tight text-ink sm:text-4xl">
               Bank statement to Excel <span className="text-emerald">software</span>
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
