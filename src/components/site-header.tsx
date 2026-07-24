@@ -10,7 +10,7 @@ import { AuthActions } from "@/components/user-menu";
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-white/5 bg-ink">
-      <div className="mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-6">
+      <div className="grid h-16 w-full grid-cols-[1fr_auto_1fr] items-center gap-4 px-6 sm:px-8">
         {/* Left: brand */}
         <div className="flex items-center">
           <Link to="/" className="flex items-center gap-2.5 text-background">
