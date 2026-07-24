@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, History, User as UserIcon, CreditCard, Zap, Settings, ChevronUp } from "lucide-react";
+import { LogOut, History, User as UserIcon, CreditCard, Zap, Settings, ChevronDown } from "lucide-react";
 
 type Variant = "dark" | "light";
 
