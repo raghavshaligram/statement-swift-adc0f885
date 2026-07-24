@@ -27,7 +27,8 @@ import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
 import { getPdfPageCount } from "@/lib/pdf/extract-text";
 import { ANONYMOUS_MAX_PAGES } from "@/lib/pricing-constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -79,6 +80,12 @@ const FEATURES = [
 ];
 
 function Landing() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!loading && user) navigate({ to: "/upload", replace: true });
+  }, [user, loading, navigate]);
+  if (loading || user) return <div className="min-h-screen bg-background" />;
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
