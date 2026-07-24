@@ -107,10 +107,16 @@ function Landing() {
 
       {/* HERO — centered, clean, reference-style layout */}
       <section id="converter" className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0 grid-fintech opacity-40" aria-hidden />
+        <div className="absolute inset-0 grid-fintech" aria-hidden />
         <div className="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-emerald-soft/40 to-transparent" aria-hidden />
         <div className="relative mx-auto max-w-5xl px-6 pb-12 pt-16 lg:pt-24">
           <ScrollReveal className="text-center">
+            <div className="mb-5 flex justify-center">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald/30 bg-card px-3.5 py-1.5 text-xs font-semibold text-emerald shadow-sm">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Privacy through architecture — zero server uploads
+              </span>
+            </div>
             <h1 className="font-serif text-4xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl">
               Bank statement to Excel <span className="text-emerald">software</span>
             </h1>

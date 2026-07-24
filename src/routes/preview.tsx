@@ -48,7 +48,17 @@ function PreviewPage() {
   const filtered = useMemo(
     () =>
       rows
-        .filter((r) => r.description.toLowerCase().includes(q.toLowerCase()))
+        .filter((r) => {
+          const haystack = [
+            r.description,
+            r.date,
+            r.amount.toFixed(2),
+            r.balance !== null ? r.balance.toFixed(2) : "",
+          ]
+            .join(" ")
+            .toLowerCase();
+          return haystack.includes(q.toLowerCase());
+        })
         .filter((r) => {
           if (tab === "credits") return r.amount > 0;
           if (tab === "debits") return r.amount < 0;
