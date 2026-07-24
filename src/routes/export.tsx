@@ -267,11 +267,3 @@ function SummaryRow({ label, value, mono }: { label: string; value: string; mono
   );
 }
 
-function NextCard({ title, body, to }: { title: string; body: string; to: "/upload" | "/pricing" | "/preview" }) {
-  return (
-    <Link to={to} className="rounded-lg border border-border bg-surface-muted/40 p-4 transition hover:border-emerald hover:bg-emerald-soft/30">
-      <div className="text-sm font-semibold text-ink">{title}</div>
-      <div className="mt-1 text-xs text-muted-foreground">{body}</div>
-    </Link>
-  );
-}
