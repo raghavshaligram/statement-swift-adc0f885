@@ -1,6 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, ArrowRight, Check, FileText, LayoutGrid, Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/signin")({
   head: () => ({
@@ -26,12 +29,40 @@ function GoogleIcon({ className }: { className?: string }) {
 }
 
 function SignInPage() {
+  const navigate = useNavigate();
   const [show, setShow] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function onEmailSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Welcome back!");
+    navigate({ to: "/upload" });
+  }
+
+  async function onGoogle() {
+    const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    if (res.error) {
+      toast.error(res.error.message ?? "Google sign-in failed.");
+      return;
+    }
+    if (res.redirected) return;
+    navigate({ to: "/upload" });
+  }
 
   return (
     <div className="min-h-screen bg-background lg:grid lg:grid-cols-2">
       {/* LEFT — form column */}
       <div className="flex min-h-screen flex-col px-6 py-8 lg:px-16 lg:py-10">
+
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 text-ink">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald text-primary-foreground">
@@ -57,6 +88,7 @@ function SignInPage() {
 
           <button
             type="button"
+            onClick={onGoogle}
             className="mt-8 flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-border bg-background text-sm font-semibold text-ink shadow-sm transition-colors hover:bg-surface-muted/60"
           >
             <GoogleIcon className="h-4 w-4" />
@@ -69,13 +101,16 @@ function SignInPage() {
             <span className="h-px flex-1 bg-border" />
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" onSubmit={onEmailSignIn}>
             <div>
               <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-ink">Email</label>
               <input
                 id="email"
                 type="email"
+                required
                 autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
                 className="h-12 w-full rounded-xl border border-border bg-background px-4 text-sm text-ink placeholder:text-muted-foreground focus:border-emerald focus:outline-none focus:ring-4 focus:ring-emerald/15"
               />
@@ -84,15 +119,18 @@ function SignInPage() {
             <div>
               <div className="mb-1.5 flex items-center justify-between">
                 <label htmlFor="password" className="text-sm font-semibold text-ink">Password</label>
-                <a href="#" className="text-sm font-semibold text-emerald hover:underline">
+                <Link to="/forgot-password" className="text-sm font-semibold text-emerald hover:underline">
                   Forgot password?
-                </a>
+                </Link>
               </div>
               <div className="relative">
                 <input
                   id="password"
                   type={show ? "text" : "password"}
+                  required
                   autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="Your password"
                   className="h-12 w-full rounded-xl border border-border bg-background px-4 pr-11 text-sm text-ink placeholder:text-muted-foreground focus:border-emerald focus:outline-none focus:ring-4 focus:ring-emerald/15"
                 />
@@ -109,9 +147,10 @@ function SignInPage() {
 
             <button
               type="submit"
-              className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-emerald/90"
+              disabled={loading}
+              className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-emerald/90 disabled:opacity-60"
             >
-              Sign in
+              {loading ? "Signing in…" : "Sign in"}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </button>
           </form>
