@@ -10,9 +10,9 @@ import { cn } from "@/lib/utils";
 const STEPS = [
   {
     icon: Upload,
-    title: "Drop your PDF",
-    body: "Drag a text-based bank statement PDF onto the upload area. Supports multi-page statements from 30+ banks across the US, UK, and Canada.",
-    chip: "Accepted: digital PDF only — not scanned images",
+    title: "Drop your statement",
+    body: "Drag a bank statement onto the upload area — PDF, scanned, or a photo. Supports multi-page statements from 22+ named banks across the US, UK, Canada, and India, plus a generic parser for any other bank.",
+    chip: "Accepted: PDF, JPG, PNG, or WEBP",
   },
   {
     icon: Cpu,

@@ -20,8 +20,8 @@ const FAQ: Array<{ q: string; a: string }> = [
     a: "Named detection for 20+ major banks across the US, UK, Canada, and India — including Chase, Bank of America, Citibank, Barclays, HSBC, RBC, ICICI, HDFC, and more — plus a generic layout parser for any other bank's text-based PDF statement. Export to Excel, CSV, Tally XML, OFX, QIF, or QBO.",
   },
   {
-    q: "Does it work with scanned PDFs?",
-    a: "Yes. If your statement is scanned or photographed, LedgerLocal automatically falls back to on-device OCR to read it — no upload, same as everything else. It's slower than reading a real text layer, and less precise, so double-check extracted rows before exporting.",
+    q: "Does it work with scanned PDFs or photos?",
+    a: "Yes. Scanned PDFs, and JPG/PNG/WEBP photos or screenshots of a statement, all fall back to on-device OCR automatically — no upload, same as everything else. Results depend on image quality: a clear scan or screenshot works well, but a blurry or heavily compressed photo may not read correctly. Always double-check extracted rows before exporting.",
   },
   {
     q: "Can I import into QuickBooks?",
