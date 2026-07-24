@@ -509,11 +509,7 @@ function HeroUploadCard() {
                 Sign up free
               </Link>
             </div>
-          ) : (
-            <div className="mt-3 px-4 pb-3 text-center text-xs text-muted-foreground">
-              PDF only · Up to {ANONYMOUS_MAX_PAGES} pages · Unlimited conversions
-            </div>
-          )}
+          ) : null}
         </>
       )}
     </div>
