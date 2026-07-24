@@ -56,12 +56,63 @@ const ROLE_KEYWORDS: Array<{ role: ColumnRole; patterns: RegExp[] }> = [
   { role: "drCrColumn", patterns: [/^dr\s*\/?\s*cr\.?$/i, /^dr\/cr$/i] },
 ];
 
+// Canonical words for fuzzy matching, used as a fallback when an OCR'd
+// header doesn't exactly match the regex patterns above (e.g. "Date" ->
+// "Dace", "Balance" -> "Batance" are real, observed OCR misreadings on a
+// genuine scanned statement, not hypothetical edge cases). Kept separate
+// from the regex patterns since those include real variations (e.g.
+// "particulars?") that aren't meaningful as literal strings to diff against.
+const FUZZY_CANONICAL: Array<{ role: ColumnRole; words: string[] }> = [
+  { role: "date", words: ["date", "transaction date", "txn date"] },
+  { role: "description", words: ["particulars", "description", "narration", "details", "transaction details"] },
+  { role: "withdrawal", words: ["withdrawals", "withdrawal", "debit"] },
+  { role: "deposit", words: ["deposits", "deposit", "credit"] },
+  { role: "balance", words: ["balance", "closing balance", "running balance"] },
+  { role: "amount", words: ["amount"] },
+];
+
+/** Plain Levenshtein edit distance -- small, self-contained, no dependency needed for this. */
+function editDistance(a: string, b: string): number {
+  const dp: number[][] = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+  for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+  for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+    }
+  }
+  return dp[a.length][b.length];
+}
+
+/**
+ * Fuzzy fallback for header matching -- tolerates small OCR misreadings
+ * (1-2 character errors) that the exact regex patterns above would miss
+ * entirely. Only tried when the exact match fails, and only accepts a
+ * match when the edit distance is small relative to the word's length, so
+ * a genuinely different, short word doesn't accidentally match.
+ */
+function fuzzyMatchRole(label: string): ColumnRole | null {
+  const cleaned = label.trim().toLowerCase().replace(/[*:]+$/, "");
+  if (cleaned.length < 3) return null; // too short to fuzzy-match safely
+  let best: { role: ColumnRole; distance: number } | null = null;
+  for (const { role, words } of FUZZY_CANONICAL) {
+    for (const word of words) {
+      const distance = editDistance(cleaned, word);
+      const threshold = Math.max(1, Math.floor(word.length * 0.25));
+      if (distance <= threshold && (!best || distance < best.distance)) {
+        best = { role, distance };
+      }
+    }
+  }
+  return best?.role ?? null;
+}
+
 function matchRole(label: string): ColumnRole | null {
   const cleaned = label.trim().replace(/[*:]+$/, "");
   for (const { role, patterns } of ROLE_KEYWORDS) {
     if (patterns.some((p) => p.test(cleaned))) return role;
   }
-  return null;
+  return fuzzyMatchRole(label);
 }
 
 type Row = { y: number; items: TextItem[]; text: string };

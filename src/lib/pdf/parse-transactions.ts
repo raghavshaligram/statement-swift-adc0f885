@@ -29,13 +29,24 @@ export type RawTransaction = {
 // Covers the common statement date formats. "ambiguous" formats are numeric
 // with no month name, so day/month order is resolved by the document-wide
 // inference in date-inference.ts rather than guessed per-row.
+//
+// [oO0] appears in a few digit positions below -- OCR commonly misreads the
+// digit 0 as the letter O/o (a real, well-established confusion, confirmed
+// on a real scanned statement this session: "01" OCR'd as "O1"). Also made
+// the separator optional in the month-name pattern, since OCR sometimes
+// drops the space/dash entirely ("01Nov2023"). Deliberately NOT trying to
+// handle every possible OCR character misread (e.g. a stray "t" standing in
+// for "1", or "z" for "2", both also seen on that same real statement) --
+// that starts to risk false-positive matches on real non-date text for
+// diminishing returns on OCR quality this poor. Severely garbled OCR output
+// is an expected, honest limitation, not something worth chasing indefinitely.
 const DATE_PATTERNS: Array<{
   re: RegExp;
   kind: "iso" | "monthName" | "ambiguous";
 }> = [
   { re: /\b(\d{4})-(\d{2})-(\d{2})\b/, kind: "iso" }, // YYYY-MM-DD
-  { re: /\b(\d{1,2})[-\s]([A-Za-z]{3})[-\s](\d{4})\b/, kind: "monthName" }, // 15-Jan-2025
-  { re: /\b([A-Za-z]{3,9})\s+(\d{1,2}),?\s+(\d{4})\b/, kind: "monthName" }, // Jan 15, 2025 (month first)
+  { re: /\b([\dOo]{1,2})[-\s]?([A-Za-z]{3})[-\s]?(\d{4})\b/, kind: "monthName" }, // 15-Jan-2025, tolerant of missing separator and O/0 confusion
+  { re: /\b([A-Za-z]{3,9})\s+([\dOo]{1,2}),?\s+(\d{4})\b/, kind: "monthName" }, // Jan 15, 2025 (month first)
   { re: /\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/, kind: "ambiguous" }, // MM/DD/YYYY or DD/MM/YYYY
   { re: /\b(\d{1,2})-(\d{1,2})-(\d{4})\b/, kind: "ambiguous" }, // MM-DD-YYYY or DD-MM-YYYY
 ];
@@ -61,10 +72,14 @@ function findDate(
     if (kind === "monthName") {
       // Two possible group orders: "15-Jan-2025" (day, month, year) or
       // "Jan 15, 2025" (month, day, year) -- tell them apart by which group
-      // is the month name.
-      const isMonthFirst = isNaN(parseInt(m[1], 10));
-      const monthStr = isMonthFirst ? m[1] : m[2];
-      const dayStr = isMonthFirst ? m[2] : m[1];
+      // is the month name. Normalize O/o -> 0 first (see the DATE_PATTERNS
+      // comment on why the regex tolerates that OCR confusion) so isNaN and
+      // the day-number parsing below see a real digit string, not "O1".
+      const g1 = m[1].replace(/[Oo]/g, "0");
+      const g2 = m[2].replace(/[Oo]/g, "0");
+      const isMonthFirst = isNaN(parseInt(g1, 10));
+      const monthStr = isMonthFirst ? g1 : g2;
+      const dayStr = isMonthFirst ? g2 : g1;
       const month = MONTHS[monthStr.toLowerCase().slice(0, 3)];
       if (!month) continue;
       return { iso: `${m[3]}-${month}-${dayStr.padStart(2, "0")}`, matchedText: m[0], unambiguous: true };
