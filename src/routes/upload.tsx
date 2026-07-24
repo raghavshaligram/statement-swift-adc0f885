@@ -7,7 +7,7 @@ import { ParseQueue } from "@/components/parse-queue";
 import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
 import { getPdfPageCount } from "@/lib/pdf/extract-text";
-import { FREE_TIER_MAX_PAGES } from "@/lib/pricing-constants";
+import { ANONYMOUS_MAX_PAGES } from "@/lib/pricing-constants";
 import { OCR_LANGUAGES } from "@/lib/pdf/ocr-languages";
 
 export const Route = createFileRoute("/upload")({
@@ -48,11 +48,13 @@ function UploadPage() {
     const pageCounts = await Promise.all(
       arr.map(async (f) => ({ file: f, pages: await getPdfPageCount(f) }))
     );
-    const tooLong = pageCounts.filter((p) => p.pages > FREE_TIER_MAX_PAGES);
+    const tooLong = pageCounts.filter((p) => p.pages > ANONYMOUS_MAX_PAGES);
     if (tooLong.length > 0) {
-      const names = tooLong.map((t) => `${t.file.name} (${t.pages} pages)`).join(", ");
+      const first = tooLong[0];
       setPageLimitError(
-        `${names} ${tooLong.length > 1 ? "exceed" : "exceeds"} the ${FREE_TIER_MAX_PAGES}-page free limit. Sign up for Pro to convert longer statements, or remove ${tooLong.length > 1 ? "these files" : "this file"} and try again.`
+        tooLong.length === 1
+          ? `${first.file.name} is too large for the free demo. Sign up to convert larger statements.`
+          : `${tooLong.map((t) => t.file.name).join(", ")} are too large for the free demo. Sign up to convert larger statements.`
       );
       return;
     }
@@ -103,14 +105,22 @@ function UploadPage() {
         )}
 
         {pageLimitError && (
-          <div className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3">
-            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-            <div className="flex-1 text-sm text-amber-900">
-              {pageLimitError}
-              <Link to="/pricing" className="ml-2 font-semibold text-amber-900 underline hover:no-underline">
-                See Pro plans →
-              </Link>
+          <div className="flex items-center justify-between gap-4 rounded-2xl border border-amber-300 bg-amber-50 px-5 py-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+              <div>
+                <div className="font-semibold text-amber-900">
+                  This demo supports up to {ANONYMOUS_MAX_PAGES} pages
+                </div>
+                <div className="text-sm text-amber-800">{pageLimitError}</div>
+              </div>
             </div>
+            <Link
+              to="/signup"
+              className="shrink-0 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-600"
+            >
+              Sign up free
+            </Link>
           </div>
         )}
 

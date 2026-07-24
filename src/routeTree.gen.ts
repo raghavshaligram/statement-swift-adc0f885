@@ -9,71 +9,40 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as UploadRouteImport } from './routes/upload'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as SigninRouteImport } from './routes/signin'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as PricingRouteImport } from './routes/pricing'
-import { Route as PreviewRouteImport } from './routes/preview'
-import { Route as IciciBankStatementToExcelRouteImport } from './routes/icici-bank-statement-to-excel'
-import { Route as ExportRouteImport } from './routes/export'
-import { Route as ChaseBankStatementToExcelRouteImport } from './routes/chase-bank-statement-to-excel'
-import { Route as BankStatementToTallyRouteImport } from './routes/bank-statement-to-tally'
-import { Route as BankStatementToQifRouteImport } from './routes/bank-statement-to-qif'
-import { Route as BankStatementToOfxRouteImport } from './routes/bank-statement-to-ofx'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BankStatementToOfxRouteImport } from './routes/bank-statement-to-ofx'
+import { Route as BankStatementToQifRouteImport } from './routes/bank-statement-to-qif'
+import { Route as BankStatementToTallyRouteImport } from './routes/bank-statement-to-tally'
+import { Route as ChaseBankStatementToExcelRouteImport } from './routes/chase-bank-statement-to-excel'
+import { Route as ExportRouteImport } from './routes/export'
+import { Route as IciciBankStatementToExcelRouteImport } from './routes/icici-bank-statement-to-excel'
+import { Route as PreviewRouteImport } from './routes/preview'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SigninRouteImport } from './routes/signin'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as UploadRouteImport } from './routes/upload'
 
-const UploadRoute = UploadRouteImport.update({
-  id: '/upload',
-  path: '/upload',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
+const BankStatementToOfxRoute = BankStatementToOfxRouteImport.update({
+  id: '/bank-statement-to-ofx',
+  path: '/bank-statement-to-ofx',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const BankStatementToQifRoute = BankStatementToQifRouteImport.update({
+  id: '/bank-statement-to-qif',
+  path: '/bank-statement-to-qif',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SigninRoute = SigninRouteImport.update({
-  id: '/signin',
-  path: '/signin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PreviewRoute = PreviewRouteImport.update({
-  id: '/preview',
-  path: '/preview',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IciciBankStatementToExcelRoute =
-  IciciBankStatementToExcelRouteImport.update({
-    id: '/icici-bank-statement-to-excel',
-    path: '/icici-bank-statement-to-excel',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ExportRoute = ExportRouteImport.update({
-  id: '/export',
-  path: '/export',
+const BankStatementToTallyRoute = BankStatementToTallyRouteImport.update({
+  id: '/bank-statement-to-tally',
+  path: '/bank-statement-to-tally',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChaseBankStatementToExcelRoute =
@@ -82,24 +51,55 @@ const ChaseBankStatementToExcelRoute =
     path: '/chase-bank-statement-to-excel',
     getParentRoute: () => rootRouteImport,
   } as any)
-const BankStatementToTallyRoute = BankStatementToTallyRouteImport.update({
-  id: '/bank-statement-to-tally',
-  path: '/bank-statement-to-tally',
+const ExportRoute = ExportRouteImport.update({
+  id: '/export',
+  path: '/export',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BankStatementToQifRoute = BankStatementToQifRouteImport.update({
-  id: '/bank-statement-to-qif',
-  path: '/bank-statement-to-qif',
+const IciciBankStatementToExcelRoute =
+  IciciBankStatementToExcelRouteImport.update({
+    id: '/icici-bank-statement-to-excel',
+    path: '/icici-bank-statement-to-excel',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const PreviewRoute = PreviewRouteImport.update({
+  id: '/preview',
+  path: '/preview',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BankStatementToOfxRoute = BankStatementToOfxRouteImport.update({
-  id: '/bank-statement-to-ofx',
-  path: '/bank-statement-to-ofx',
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UploadRoute = UploadRouteImport.update({
+  id: '/upload',
+  path: '/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -229,95 +229,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/upload': {
-      id: '/upload'
-      path: '/upload'
-      fullPath: '/upload'
-      preLoaderRoute: typeof UploadRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signin': {
-      id: '/signin'
-      path: '/signin'
-      fullPath: '/signin'
-      preLoaderRoute: typeof SigninRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/preview': {
-      id: '/preview'
-      path: '/preview'
-      fullPath: '/preview'
-      preLoaderRoute: typeof PreviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/icici-bank-statement-to-excel': {
-      id: '/icici-bank-statement-to-excel'
-      path: '/icici-bank-statement-to-excel'
-      fullPath: '/icici-bank-statement-to-excel'
-      preLoaderRoute: typeof IciciBankStatementToExcelRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/export': {
-      id: '/export'
-      path: '/export'
-      fullPath: '/export'
-      preLoaderRoute: typeof ExportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chase-bank-statement-to-excel': {
-      id: '/chase-bank-statement-to-excel'
-      path: '/chase-bank-statement-to-excel'
-      fullPath: '/chase-bank-statement-to-excel'
-      preLoaderRoute: typeof ChaseBankStatementToExcelRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/bank-statement-to-tally': {
-      id: '/bank-statement-to-tally'
-      path: '/bank-statement-to-tally'
-      fullPath: '/bank-statement-to-tally'
-      preLoaderRoute: typeof BankStatementToTallyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/bank-statement-to-qif': {
-      id: '/bank-statement-to-qif'
-      path: '/bank-statement-to-qif'
-      fullPath: '/bank-statement-to-qif'
-      preLoaderRoute: typeof BankStatementToQifRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bank-statement-to-ofx': {
@@ -327,11 +243,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BankStatementToOfxRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/bank-statement-to-qif': {
+      id: '/bank-statement-to-qif'
+      path: '/bank-statement-to-qif'
+      fullPath: '/bank-statement-to-qif'
+      preLoaderRoute: typeof BankStatementToQifRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bank-statement-to-tally': {
+      id: '/bank-statement-to-tally'
+      path: '/bank-statement-to-tally'
+      fullPath: '/bank-statement-to-tally'
+      preLoaderRoute: typeof BankStatementToTallyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chase-bank-statement-to-excel': {
+      id: '/chase-bank-statement-to-excel'
+      path: '/chase-bank-statement-to-excel'
+      fullPath: '/chase-bank-statement-to-excel'
+      preLoaderRoute: typeof ChaseBankStatementToExcelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/export': {
+      id: '/export'
+      path: '/export'
+      fullPath: '/export'
+      preLoaderRoute: typeof ExportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/icici-bank-statement-to-excel': {
+      id: '/icici-bank-statement-to-excel'
+      path: '/icici-bank-statement-to-excel'
+      fullPath: '/icici-bank-statement-to-excel'
+      preLoaderRoute: typeof IciciBankStatementToExcelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preview': {
+      id: '/preview'
+      path: '/preview'
+      fullPath: '/preview'
+      preLoaderRoute: typeof PreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/upload': {
+      id: '/upload'
+      path: '/upload'
+      fullPath: '/upload'
+      preLoaderRoute: typeof UploadRouteImport
       parentRoute: typeof rootRouteImport
     }
   }

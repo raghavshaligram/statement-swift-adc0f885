@@ -11,6 +11,7 @@ import {
   Layers,
   FileOutput,
   Shield,
+  AlertTriangle,
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { ScrollReveal, ScrollRevealGroup, ScrollRevealItem } from "@/components/scroll-reveal";
@@ -24,6 +25,8 @@ import { HomepageFaq } from "@/components/homepage-faq";
 import { BANK_LABELS } from "@/lib/pdf/bank-detection";
 import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
+import { getPdfPageCount } from "@/lib/pdf/extract-text";
+import { ANONYMOUS_MAX_PAGES } from "@/lib/pricing-constants";
 import { useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -317,7 +320,8 @@ function Landing() {
                   <span className="text-sm text-muted-foreground">no signup required</span>
                 </div>
                 <p className="mt-3 text-sm text-muted-foreground">
-                  Unlimited conversions, up to 10 pages per statement. Excel and CSV export.
+                  Unlimited conversions, always. Try instantly with no signup (up to {ANONYMOUS_MAX_PAGES} pages
+                  per statement), or sign up free for up to 10 pages. Excel and CSV export.
                 </p>
               </div>
             </ScrollRevealItem>
@@ -392,8 +396,28 @@ function HeroUploadCard() {
   const finishProcessing = useStatementStore((s) => s.finishProcessing);
   const failProcessing = useStatementStore((s) => s.failProcessing);
   const [, setLiveFileName] = useState("");
+  const [pageLimitError, setPageLimitError] = useState<string | null>(null);
 
   async function handleFiles(files: File[]) {
+    setPageLimitError(null);
+
+    // Real, instant page-count check (PDF metadata only, no text extraction)
+    // before any parsing starts. This is the actual live homepage upload
+    // widget (HeroUploadCard) -- the "Up to 6 pages" label below the
+    // dropzone had no enforcement behind it at all until this fix.
+    const pageCounts = await Promise.all(
+      files.map(async (f) => ({ file: f, pages: await getPdfPageCount(f) }))
+    );
+    const tooLong = pageCounts.filter((p) => p.pages > ANONYMOUS_MAX_PAGES);
+    if (tooLong.length > 0) {
+      setPageLimitError(
+        tooLong.length === 1
+          ? `${tooLong[0].file.name} is too large for the free demo. Sign up to convert larger statements.`
+          : `${tooLong.map((t) => t.file.name).join(", ")} are too large for the free demo. Sign up to convert larger statements.`
+      );
+      return;
+    }
+
     reset();
     setPendingFiles(files);
     startProcessing();
@@ -445,9 +469,29 @@ function HeroUploadCard() {
             onFiles={handleFiles}
             className="border-2 border-dashed border-border/80 bg-surface/50"
           />
-          <div className="mt-3 px-4 pb-3 text-center text-xs text-muted-foreground">
-            PDF only · Up to 6 pages · Unlimited Conversions
-          </div>
+          {pageLimitError ? (
+            <div className="mx-2 mt-3 flex items-center justify-between gap-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3">
+              <div className="flex items-start gap-2.5 text-left">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                <div>
+                  <div className="text-sm font-semibold text-amber-900">
+                    This demo supports up to {ANONYMOUS_MAX_PAGES} pages
+                  </div>
+                  <div className="text-xs text-amber-800">{pageLimitError}</div>
+                </div>
+              </div>
+              <Link
+                to="/signup"
+                className="shrink-0 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-amber-600"
+              >
+                Sign up free
+              </Link>
+            </div>
+          ) : (
+            <div className="mt-3 px-4 pb-3 text-center text-xs text-muted-foreground">
+              PDF only · Up to {ANONYMOUS_MAX_PAGES} pages · Unlimited conversions
+            </div>
+          )}
         </>
       )}
     </div>

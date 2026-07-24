@@ -22,6 +22,8 @@ import { StatementDropzone } from "@/components/statement-dropzone";
 import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
 import { getConfidenceTier } from "@/lib/pdf/confidence";
+import { getPdfPageCount } from "@/lib/pdf/extract-text";
+import { ANONYMOUS_MAX_PAGES } from "@/lib/pricing-constants";
 
 // Hardcoded, clearly-labeled example — never shown as if it were a real parse.
 const EXAMPLE_ROWS = [
@@ -47,6 +49,7 @@ export function HeroDemo() {
   const reset = useStatementStore((s) => s.reset);
 
   const [liveFileName, setLiveFileName] = useState("");
+  const [pageLimitError, setPageLimitError] = useState<string | null>(null);
 
   // The homepage always starts from the idle example demo — if a visitor
   // navigates back here after converting something (e.g. via the header
@@ -57,6 +60,24 @@ export function HeroDemo() {
   }, []);
 
   async function handleFiles(files: File[]) {
+    setPageLimitError(null);
+
+    // Real, instant page-count check (just PDF metadata, no text extraction)
+    // before any parsing work starts -- this homepage demo previously had NO
+    // enforcement at all despite the dropzone label claiming a page limit.
+    const pageCounts = await Promise.all(
+      files.map(async (f) => ({ file: f, pages: await getPdfPageCount(f) }))
+    );
+    const tooLong = pageCounts.filter((p) => p.pages > ANONYMOUS_MAX_PAGES);
+    if (tooLong.length > 0) {
+      setPageLimitError(
+        tooLong.length === 1
+          ? `${tooLong[0].file.name} is too large for the free demo. Sign up to convert larger statements.`
+          : `${tooLong.map((t) => t.file.name).join(", ")} are too large for the free demo. Sign up to convert larger statements.`
+      );
+      return;
+    }
+
     reset();
     setPendingFiles(files);
     startProcessing();
@@ -88,7 +109,27 @@ export function HeroDemo() {
       {phase === "idle" && (
         <>
           <StatementDropzone variant="compact" onFiles={handleFiles} />
-          <IdleExampleLoop />
+          {pageLimitError ? (
+            <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3">
+              <div className="flex items-start gap-2.5">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                <div>
+                  <div className="text-sm font-semibold text-amber-900">
+                    This demo supports up to {ANONYMOUS_MAX_PAGES} pages
+                  </div>
+                  <div className="text-xs text-amber-800">{pageLimitError}</div>
+                </div>
+              </div>
+              <Link
+                to="/signup"
+                className="shrink-0 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-amber-600"
+              >
+                Sign up free
+              </Link>
+            </div>
+          ) : (
+            <IdleExampleLoop />
+          )}
         </>
       )}
 
