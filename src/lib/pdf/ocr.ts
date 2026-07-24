@@ -57,6 +57,41 @@ function makeCanvas(w: number, h: number): HTMLCanvasElement | OffscreenCanvas {
   return c;
 }
 
+/**
+ * Decodes an image file to an HTMLImageElement, ready to draw to canvas.
+ * Ported from PDFMacro's decodeImage (ocr-image.ts) -- standard browser
+ * APIs, no dependencies, directly reusable as-is.
+ */
+async function decodeImage(file: File): Promise<HTMLImageElement> {
+  const url = URL.createObjectURL(file);
+  try {
+    return await new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error("Could not decode image"));
+      img.src = url;
+    });
+  } finally {
+    setTimeout(() => URL.revokeObjectURL(url), 10_000);
+  }
+}
+
+async function createOcrWorker(langArg: string, useSelfHostedLang: boolean) {
+  const tesseract = await import("tesseract.js");
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  return tesseract.createWorker(langArg, 1, {
+    // Worker script + WASM core are always self-hosted -- these are the
+    // OCR engine itself, not language-specific, so this covers every
+    // language regardless of which one is requested. Only English's
+    // language data is self-hosted; everything else uses tesseract.js's
+    // default CDN langPath.
+    workerPath: `${origin}/tesseract/worker.min.js`,
+    corePath: `${origin}/tesseract/tesseract-core-simd-lstm.js`,
+    ...(useSelfHostedLang ? { langPath: `${origin}/tesseract` } : {}),
+    workerBlobURL: false,
+  });
+}
+
 let pdfjsLibPromise: Promise<typeof import("pdfjs-dist")> | null = null;
 async function loadPdfJsForOcr() {
   if (!pdfjsLibPromise) {
@@ -67,6 +102,61 @@ async function loadPdfJsForOcr() {
     });
   }
   return pdfjsLibPromise;
+}
+
+/**
+ * OCRs a single image file (JPG/PNG/WEBP/etc, not a PDF) and returns text
+ * items in the same shape as the PDF paths, so it feeds into the exact same
+ * parseTransactionsFromPages pipeline unchanged -- a raw image upload is
+ * just another TextItem source, not a separate parsing path. Adapted from
+ * PDFMacro's ocrImageToSearchable (ocr-image.ts): decodes the image
+ * straight to canvas, skipping pdf.js rendering entirely (there's no PDF
+ * here at all), then runs the exact same tesseract recognize() call the
+ * PDF-OCR path already uses.
+ */
+export async function ocrImageToTextItems(
+  file: File,
+  onProgress?: (e: OcrProgressEvent) => void,
+  languages: string[] = ["eng"]
+): Promise<{ items: TextItem[]; rawText: string }> {
+  if (typeof window === "undefined") {
+    throw new Error("ocrImageToTextItems can only run in the browser");
+  }
+
+  const { toTesseractLang } = await import("./ocr-languages");
+  const langArg = toTesseractLang(languages);
+  const useSelfHostedLang = languages.length === 1 && languages[0] === "eng";
+
+  onProgress?.({ sourcePage: 1, totalPages: 1, stage: "loading-language", message: "Loading OCR language pack…" });
+
+  const img = await decodeImage(file);
+  onProgress?.({ sourcePage: 1, totalPages: 1, stage: "rendering", message: "Reading image…" });
+  const canvas = makeCanvas(img.naturalWidth || img.width, img.naturalHeight || img.height);
+  const ctx = canvas.getContext("2d") as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
+  if (!ctx) throw new Error("Canvas 2D context unavailable");
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img as unknown as CanvasImageSource, 0, 0);
+
+  const worker = await createOcrWorker(langArg, useSelfHostedLang);
+  try {
+    onProgress?.({ sourcePage: 1, totalPages: 1, stage: "ocr", message: "Running OCR…" });
+    const { data } = await worker.recognize(canvas as HTMLCanvasElement, {}, { blocks: true });
+    const words = collectWords(data);
+    const items: TextItem[] = [];
+    for (const w of words) {
+      const text = w.text.replace(/\s+/g, " ").trim();
+      if (!text) continue;
+      const width = w.bbox.x1 - w.bbox.x0;
+      const height = w.bbox.y1 - w.bbox.y0;
+      if (width <= 0 || height <= 0) continue;
+      items.push({ str: text, x: w.bbox.x0, y: w.bbox.y0, width, height });
+    }
+    const rawText = items.map((it) => it.str).join(" ");
+    return { items, rawText };
+  } finally {
+    await worker.terminate().catch(() => undefined);
+  }
 }
 
 /**
@@ -86,7 +176,6 @@ export async function ocrPdfToTextItems(
   }
 
   const pdfjsLib = await loadPdfJsForOcr();
-  const tesseract = await import("tesseract.js");
   const { toTesseractLang } = await import("./ocr-languages");
   const langArg = toTesseractLang(languages);
   // Only English is self-hosted (see the module comment in ocr-languages.ts
@@ -105,21 +194,8 @@ export async function ocrPdfToTextItems(
   // rather than one page at a time -- matters a lot on a 20+ page statement.
   const hw = typeof navigator !== "undefined" ? navigator.hardwareConcurrency || 2 : 2;
   const poolSize = Math.max(1, Math.min(4, Math.floor(hw / 2)));
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
   const workers = await Promise.all(
-    Array.from({ length: poolSize }, () =>
-      tesseract.createWorker(langArg, 1, {
-        // Worker script + WASM core are always self-hosted -- these are the
-        // OCR engine itself, not language-specific, so this covers every
-        // language regardless of which one is requested. Only English's
-        // language *data* is self-hosted (see the note above langArg);
-        // everything else uses tesseract.js's default CDN langPath.
-        workerPath: `${origin}/tesseract/worker.min.js`,
-        corePath: `${origin}/tesseract/tesseract-core-simd-lstm.js`,
-        ...(useSelfHostedLang ? { langPath: `${origin}/tesseract` } : {}),
-        workerBlobURL: false,
-      })
-    )
+    Array.from({ length: poolSize }, () => createOcrWorker(langArg, useSelfHostedLang))
   );
   const idleWorkers = [...workers];
   const waiters: Array<(w: (typeof workers)[number]) => void> = [];

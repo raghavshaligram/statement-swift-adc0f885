@@ -25,7 +25,7 @@ import { HomepageFaq } from "@/components/homepage-faq";
 import { BANK_LABELS } from "@/lib/pdf/bank-detection";
 import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
-import { getPdfPageCount } from "@/lib/pdf/extract-text";
+import { getStatementPageCount } from "@/lib/pdf/extract-text";
 import { ANONYMOUS_MAX_PAGES, SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
@@ -436,7 +436,7 @@ function HeroUploadCard() {
     // widget (HeroUploadCard) -- the "Up to 6 pages" label below the
     // dropzone had no enforcement behind it at all until this fix.
     const pageCounts = await Promise.all(
-      files.map(async (f) => ({ file: f, pages: await getPdfPageCount(f) }))
+      files.map(async (f) => ({ file: f, pages: await getStatementPageCount(f) }))
     );
     const tooLong = pageCounts.filter((p) => p.pages > maxPages);
     if (tooLong.length > 0) {

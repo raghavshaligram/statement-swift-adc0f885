@@ -6,7 +6,7 @@ import { StatementDropzone } from "@/components/statement-dropzone";
 import { ParseQueue } from "@/components/parse-queue";
 import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
-import { getPdfPageCount } from "@/lib/pdf/extract-text";
+import { getStatementPageCount } from "@/lib/pdf/extract-text";
 import { ANONYMOUS_MAX_PAGES, SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
 import { useAuth } from "@/hooks/use-auth";
 import { OCR_LANGUAGES } from "@/lib/pdf/ocr-languages";
@@ -49,7 +49,7 @@ function UploadPage() {
 
     // Free-tier page-per-statement check before any real parsing work.
     const pageCounts = await Promise.all(
-      arr.map(async (f) => ({ file: f, pages: await getPdfPageCount(f) }))
+      arr.map(async (f) => ({ file: f, pages: await getStatementPageCount(f) }))
     );
     const tooLong = pageCounts.filter((p) => p.pages > maxPages);
     if (tooLong.length > 0) {

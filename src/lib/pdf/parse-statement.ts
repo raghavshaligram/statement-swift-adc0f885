@@ -3,11 +3,13 @@ import { parseTransactionsFromPages, groupIntoRows } from "./parse-transactions"
 import { detectBank, BANK_LABELS } from "./bank-detection";
 import { detectCurrency } from "./detect-currency";
 import { getConfidenceTier } from "./confidence";
-import { ocrPdfToTextItems, looksLikeScannedPage } from "./ocr";
+import { ocrPdfToTextItems, ocrImageToTextItems, looksLikeScannedPage } from "./ocr";
 import { findHeaderRow, headerLabelsInOrder } from "./detect-columns";
 import { detectBankFromHeaderSignature } from "./bank-header-signatures";
 import type { PageText } from "./extract-text";
 import type { ParsedStatement, Transaction } from "../statement-store";
+
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export async function parseStatementFile(
   file: File,
@@ -15,58 +17,92 @@ export async function parseStatementFile(
   ocrLanguages: string[] = ["eng"]
 ): Promise<ParsedStatement> {
   const warnings: string[] = [];
+  const isImage = IMAGE_TYPES.includes(file.type) || /\.(jpe?g|png|webp)$/i.test(file.name);
 
   let extracted;
-  try {
-    extracted = await extractPdfText(file, onPageParsed);
-  } catch (err) {
-    return {
-      fileName: file.name,
-      fileSizeBytes: file.size,
-      pageCount: 0,
-      detectedBank: null,
-      currency: null,
-      transactions: [],
-      warnings: [
-        `Couldn't read this PDF (${err instanceof Error ? err.message : "unknown error"}). ` +
-          `It may be password-protected, scanned/image-only, or corrupted.`,
-      ],
-    };
+  let usedOcr = false;
+
+  if (isImage) {
+    // Not a PDF at all -- "statement to Excel," not "PDF to Excel." Route
+    // straight to image OCR (skips pdf.js entirely, no PDF to render).
+    try {
+      const result = await ocrImageToTextItems(file, (e) => onPageParsed?.(e.sourcePage, e.totalPages), ocrLanguages);
+      extracted = {
+        pageCount: 1,
+        pages: [{ pageNumber: 1, items: result.items, rawText: result.rawText }] as PageText[],
+        fullText: result.rawText,
+      };
+      usedOcr = true;
+      warnings.push(
+        "This was read using on-device OCR from an image file, not a PDF. OCR is less precise than reading real text -- double-check extracted rows carefully before exporting."
+      );
+    } catch (err) {
+      return {
+        fileName: file.name,
+        fileSizeBytes: file.size,
+        pageCount: 0,
+        detectedBank: null,
+        currency: null,
+        transactions: [],
+        warnings: [
+          `Couldn't read this image (${err instanceof Error ? err.message : "unknown error"}). Try a clearer photo or a PDF instead.`,
+        ],
+      };
+    }
+  } else {
+    try {
+      extracted = await extractPdfText(file, onPageParsed);
+    } catch (err) {
+      return {
+        fileName: file.name,
+        fileSizeBytes: file.size,
+        pageCount: 0,
+        detectedBank: null,
+        currency: null,
+        transactions: [],
+        warnings: [
+          `Couldn't read this PDF (${err instanceof Error ? err.message : "unknown error"}). ` +
+            `It may be password-protected, scanned/image-only, or corrupted.`,
+        ],
+      };
+    }
   }
 
   // A page with almost no real text items is very likely a scanned/photographed
   // page (image-only), not a text-based PDF -- fall back to on-device OCR for
   // the whole document rather than silently returning nothing. This is
   // genuinely slower than normal text extraction, so only do it when the
-  // fast path actually looks scanned, not on every upload.
-  const scannedPageCount = extracted.pages.filter((p) => looksLikeScannedPage(p.items.length)).length;
-  const looksScanned = extracted.pages.length > 0 && scannedPageCount / extracted.pages.length > 0.5;
+  // fast path actually looks scanned, not on every upload. Doesn't apply to
+  // the isImage path above, which already went through OCR directly.
+  if (!isImage) {
+    const scannedPageCount = extracted.pages.filter((p) => looksLikeScannedPage(p.items.length)).length;
+    const looksScanned = extracted.pages.length > 0 && scannedPageCount / extracted.pages.length > 0.5;
 
-  let usedOcr = false;
-  if (looksScanned) {
-    try {
-      const ocrResult = await ocrPdfToTextItems(file, (e) => onPageParsed?.(e.sourcePage, e.totalPages), ocrLanguages);
-      const ocrPages: PageText[] = ocrResult.pages.map((p) => ({
-        pageNumber: p.pageNumber,
-        items: p.items,
-        rawText: p.rawText,
-      }));
-      const ocrFullText = ocrPages.map((p) => p.rawText).join("\n");
-      // Only actually switch to the OCR result if it found meaningfully more
-      // text than the fast path did -- if OCR also comes back empty (a truly
-      // blank page, or an image OCR can't read), keep the original result
-      // rather than silently discarding whatever little text was there.
-      if (ocrFullText.trim().length > extracted.fullText.trim().length) {
-        extracted = { pageCount: ocrResult.pageCount, pages: ocrPages, fullText: ocrFullText };
-        usedOcr = true;
+    if (looksScanned) {
+      try {
+        const ocrResult = await ocrPdfToTextItems(file, (e) => onPageParsed?.(e.sourcePage, e.totalPages), ocrLanguages);
+        const ocrPages: PageText[] = ocrResult.pages.map((p) => ({
+          pageNumber: p.pageNumber,
+          items: p.items,
+          rawText: p.rawText,
+        }));
+        const ocrFullText = ocrPages.map((p) => p.rawText).join("\n");
+        // Only actually switch to the OCR result if it found meaningfully more
+        // text than the fast path did -- if OCR also comes back empty (a truly
+        // blank page, or an image OCR can't read), keep the original result
+        // rather than silently discarding whatever little text was there.
+        if (ocrFullText.trim().length > extracted.fullText.trim().length) {
+          extracted = { pageCount: ocrResult.pageCount, pages: ocrPages, fullText: ocrFullText };
+          usedOcr = true;
+          warnings.push(
+            "This looked like a scanned or photographed statement, so text was read using on-device OCR instead of a normal text layer. OCR is less precise than reading real text -- double-check extracted rows carefully before exporting."
+          );
+        }
+      } catch (err) {
         warnings.push(
-          "This looked like a scanned or photographed statement, so text was read using on-device OCR instead of a normal text layer. OCR is less precise than reading real text -- double-check extracted rows carefully before exporting."
+          `This looked like a scanned statement, but on-device OCR failed (${err instanceof Error ? err.message : "unknown error"}). Falling back to whatever text could be read directly, which may be incomplete.`
         );
       }
-    } catch (err) {
-      warnings.push(
-        `This looked like a scanned statement, but on-device OCR failed (${err instanceof Error ? err.message : "unknown error"}). Falling back to whatever text could be read directly, which may be incomplete.`
-      );
     }
   }
 

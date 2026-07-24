@@ -103,3 +103,14 @@ export async function getPdfPageCount(file: File): Promise<number> {
   const doc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
   return doc.numPages;
 }
+
+/**
+ * Page count for the free-tier limit check, aware of both PDFs and raw
+ * image uploads (a single photo/scan always counts as 1 page -- there's no
+ * PDF to ask pdf.js for a page count, and getPdfPageCount would just throw
+ * on a non-PDF file).
+ */
+export async function getStatementPageCount(file: File): Promise<number> {
+  const isImage = file.type.startsWith("image/") || /\.(jpe?g|png|webp)$/i.test(file.name);
+  return isImage ? 1 : getPdfPageCount(file);
+}

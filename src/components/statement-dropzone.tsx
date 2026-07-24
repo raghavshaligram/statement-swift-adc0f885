@@ -25,7 +25,12 @@ export function StatementDropzone({
 
   function handleFiles(list: FileList | File[]) {
     const files = Array.from(list).filter(
-      (f) => f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf")
+      (f) =>
+        f.type === "application/pdf" ||
+        f.type === "image/jpeg" ||
+        f.type === "image/png" ||
+        f.type === "image/webp" ||
+        /\.(pdf|jpe?g|png|webp)$/i.test(f.name)
     );
     if (files.length) onFiles(files);
   }
@@ -70,12 +75,12 @@ export function StatementDropzone({
       </div>
       <div className="text-center">
         <div className={cn("font-semibold text-ink", compact ? "text-sm" : "text-lg")}>
-          Drop PDF statements here
+          Drop a statement here
         </div>
         <div className={cn("mt-1 text-muted-foreground", compact ? "text-xs" : "text-sm")}>
           {compact
-            ? "or click to browse a statement"
-            : "or click to browse — multi-file, no size cap, no page limit on Pro"}
+            ? "PDF, scan, or photo"
+            : "PDF, scan, or photo — multi-file, no size cap, no page limit on Pro"}
         </div>
       </div>
       <div
@@ -89,14 +94,14 @@ export function StatementDropzone({
       </div>
       {!compact && (
         <div className="text-center text-xs text-muted-foreground">
-          PDF only · Up to 6 pages · Unlimited conversions
+          PDF, JPG, PNG, or WEBP · Up to 6 pages · Unlimited conversions
         </div>
       )}
       <input
         ref={inputRef}
         type="file"
         multiple={multiple}
-        accept="application/pdf"
+        accept="application/pdf,image/jpeg,image/png,image/webp"
         className="hidden"
         onChange={(e) => e.target.files && handleFiles(e.target.files)}
       />
