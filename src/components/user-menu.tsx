@@ -51,7 +51,7 @@ export function AuthActions({ variant = "dark" }: { variant?: Variant }) {
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald text-sm font-bold text-primary-foreground">
           {initial}
         </span>
-        <ChevronUp className="h-3.5 w-3.5 text-background/70" />
+        <ChevronDown className="h-3.5 w-3.5 text-background/70" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64 border-white/10 bg-ink p-0 text-background shadow-2xl">
         <div className="px-4 pb-3 pt-4">
