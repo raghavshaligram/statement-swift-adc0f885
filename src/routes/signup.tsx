@@ -100,6 +100,7 @@ function SignUpPage() {
 
           <button
             type="button"
+            onClick={onGoogle}
             className="mt-8 flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-border bg-background text-sm font-semibold text-ink shadow-sm transition-colors hover:bg-surface-muted/60"
           >
             <GoogleIcon className="h-4 w-4" />
