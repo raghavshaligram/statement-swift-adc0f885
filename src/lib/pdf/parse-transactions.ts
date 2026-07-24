@@ -10,6 +10,18 @@ export type RawTransaction = {
   sourcePage: number;
   confidence: number; // 0-99, base score before the balance-continuity pass applied in parseTransactionsFromPages
   sourceLines: string[]; // raw text of every row in this transaction's block, for the side-by-side review view
+  // Optional fields, only populated when the statement's own header row has
+  // a distinct column for them (confirmed via a real sample -- these are
+  // not derived/guessed from the description text, since e.g. a bank's
+  // internal transaction-type code often doesn't map predictably from the
+  // description's own wording).
+  valueDate: string | null;
+  tranType: string | null;
+  tranId: string | null;
+  chequeDetails: string | null;
+  // Always computable regardless of whether the statement has its own
+  // explicit DR/CR column, since it's just the sign of the amount.
+  drCr: "Dr" | "Cr";
 };
 
 // --- date parsing -----------------------------------------------------------
@@ -107,12 +119,12 @@ function findNumberItems(items: TextItem[]): NumberToken[] {
 
 // --- row reconstruction -----------------------------------------------------------
 
-type Row = { y: number; items: TextItem[]; text: string };
+export type Row = { y: number; items: TextItem[]; text: string };
 
 // Groups text items into visual rows by clustering nearby y-coordinates, then
 // sorts each row's items left-to-right by x. PDFs rarely give us perfectly
 // aligned y-values for the same visual line, so we use a tolerance band.
-function groupIntoRows(items: TextItem[], yTolerance = 3): Row[] {
+export function groupIntoRows(items: TextItem[], yTolerance = 3): Row[] {
   const sorted = [...items].sort((a, b) => a.y - b.y || a.x - b.x);
   const rows: Row[] = [];
 
@@ -303,7 +315,49 @@ function buildTransactionFromBlock(
     }
   }
 
-  const description = buildDescription(block, dateResult.matchedText, consumedRaw);
+  // Optional text-based columns -- only populated when the statement's own
+  // header row has a distinct column for them. Scans every text item in the
+  // block (not just numbers) and classifies by column position, same
+  // mechanism already used for numeric columns above. Computed before
+  // buildDescription so these values can be excluded from it -- otherwise
+  // e.g. a Tran Type code or the Value Date string could leak into the
+  // description as spurious extra words.
+  let valueDate: string | null = null;
+  let tranType: string | null = null;
+  let tranId: string | null = null;
+  let chequeDetails: string | null = null;
+  const consumedColumnText: string[] = [];
+  if (columns) {
+    for (const row of block.rows) {
+      for (const item of row.items) {
+        const col = classifyByColumn(item.x, columns);
+        if (!col) continue;
+        const text = item.str.trim();
+        if (!text) continue;
+        if (col.role === "valueDate" && valueDate === null) {
+          const parsed = findDate(text, dateOrder);
+          valueDate = parsed ? parsed.iso : text;
+          consumedColumnText.push(item.str);
+        } else if (col.role === "tranType" && tranType === null) {
+          tranType = text;
+          consumedColumnText.push(item.str);
+        } else if (col.role === "tranId" && tranId === null) {
+          tranId = text;
+          consumedColumnText.push(item.str);
+        } else if (col.role === "chequeDetails" && chequeDetails === null) {
+          chequeDetails = text;
+          consumedColumnText.push(item.str);
+        } else if (col.role === "drCrColumn") {
+          // Not stored -- just excluded from the description. See the role
+          // definition in detect-columns.ts for why we don't trust this
+          // column's raw value as the authoritative drCr field.
+          consumedColumnText.push(item.str);
+        }
+      }
+    }
+  }
+
+  const description = buildDescription(block, dateResult.matchedText, [...consumedRaw, ...consumedColumnText]);
 
   // --- Weighted confidence score ---------------------------------------
   // Base score plus points for each independent signal that came out clean.
@@ -328,6 +382,22 @@ function buildTransactionFromBlock(
     sourcePage: pageNumber,
     confidence: Math.max(1, Math.min(99, Math.round(score))),
     sourceLines: block.rows.map((r) => r.text),
+    valueDate,
+    tranType,
+    tranId,
+    chequeDetails,
+    // Real ground-truth evidence (a real Federal Bank sample, verified this
+    // session) shows DR/CR reflects the ACCOUNT BALANCE's standing (in
+    // credit vs. overdrawn), not the individual transaction's debit/credit
+    // direction -- confirmed by a real withdrawal row that still showed
+    // "Cr", because the account balance stayed positive. Basing this on the
+    // amount's sign instead (the first, wrong assumption here) would have
+    // been incorrect on that exact row. Defaults to "Cr" when balance is
+    // unknown, since a positive balance is the overwhelmingly common case --
+    // this is based on one real sample confirming the pattern for positive
+    // balances specifically; worth re-checking against a real statement
+    // that goes overdrawn once more samples are available.
+    drCr: balance !== null && balance < 0 ? "Dr" : "Cr",
   };
 }
 

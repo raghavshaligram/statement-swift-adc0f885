@@ -10,6 +10,16 @@ export type Transaction = {
   sourcePage: number;
   confidence: number; // 0-99, never 100 (never claim certainty from a heuristic) -- see confidence.ts for tier bucketing
   sourceLines: string[]; // raw PDF text lines that produced this transaction, for the side-by-side review view
+  // Optional fields, only populated when the statement's own header row has
+  // a distinct column for them (confirmed via a real sample statement) --
+  // null when the statement doesn't have that column at all.
+  valueDate: string | null;
+  tranType: string | null;
+  tranId: string | null;
+  chequeDetails: string | null;
+  // Always computable from the amount's sign, regardless of whether the
+  // statement has its own explicit DR/CR column.
+  drCr: "Dr" | "Cr";
 };
 
 export type ParsedStatement = {

@@ -27,18 +27,31 @@ function amountNumFmt(currency: string | null): string {
 }
 
 function buildSheetRows(transactions: Transaction[], options: ExportOptions) {
+  const sorted = sortByDate(transactions);
+  // Computed once across the whole batch (not per-row) so every row gets the
+  // same set of columns -- Excel's column order comes from each row object's
+  // own key insertion order, so inconsistent keys between rows would produce
+  // misaligned data.
+  const hasValueDate = sorted.some((t) => t.valueDate !== null);
+  const hasTranType = sorted.some((t) => t.tranType !== null);
+  const hasTranId = sorted.some((t) => t.tranId !== null);
+  const hasChequeDetails = sorted.some((t) => t.chequeDetails !== null);
+
   const rows: Record<string, string | number>[] = [];
-  for (const t of sortByDate(transactions)) {
-    const row: Record<string, string | number> = {
-      Date: t.date,
-      Description: t.description,
-    };
+  for (const t of sorted) {
+    const row: Record<string, string | number> = { Date: t.date };
+    if (hasValueDate) row["Value Date"] = t.valueDate ?? "";
+    row["Description"] = t.description;
+    if (hasTranType) row["Tran Type"] = t.tranType ?? "";
+    if (hasTranId) row["Tran ID"] = t.tranId ?? "";
+    if (hasChequeDetails) row["Cheque Details"] = t.chequeDetails ?? "";
     if (options.splitDebitCredit) {
       row["Debit"] = t.amount < 0 ? Math.abs(t.amount) : "";
       row["Credit"] = t.amount > 0 ? t.amount : "";
     } else {
       row["Amount"] = t.amount;
     }
+    row["Dr/Cr"] = t.drCr;
     if (options.includeBalance) row["Balance"] = t.balance ?? "";
     if (options.includeSourcePage) row["Source Page"] = t.sourcePage;
     rows.push(row);

@@ -1,9 +1,11 @@
 import { extractPdfText } from "./extract-text";
-import { parseTransactionsFromPages } from "./parse-transactions";
+import { parseTransactionsFromPages, groupIntoRows } from "./parse-transactions";
 import { detectBank, BANK_LABELS } from "./bank-detection";
 import { detectCurrency } from "./detect-currency";
 import { getConfidenceTier } from "./confidence";
 import { ocrPdfToTextItems, looksLikeScannedPage } from "./ocr";
+import { findHeaderRow, headerLabelsInOrder } from "./detect-columns";
+import { detectBankFromHeaderSignature } from "./bank-header-signatures";
 import type { PageText } from "./extract-text";
 import type { ParsedStatement, Transaction } from "../statement-store";
 
@@ -68,7 +70,24 @@ export async function parseStatementFile(
     }
   }
 
-  const bankId = detectBank(extracted.fullText);
+  let bankId = detectBank(extracted.fullText);
+  if (bankId === "unknown") {
+    // Fallback signal: check the first page's detected header row against
+    // known bank header-signatures (see bank-header-signatures.ts). Only
+    // consulted when the primary, more reliable text-based detection
+    // (the bank's name/domain printed somewhere in the statement) found
+    // nothing -- a column-layout fingerprint is a weaker signal on its own.
+    const firstPageWithText = extracted.pages.find((p) => p.items.length > 0);
+    if (firstPageWithText) {
+      const rows = groupIntoRows(firstPageWithText.items);
+      const pageWidth = Math.max(...firstPageWithText.items.map((i) => i.x + i.width), 1);
+      const header = findHeaderRow(rows, pageWidth);
+      if (header) {
+        const fromHeader = detectBankFromHeaderSignature(headerLabelsInOrder(header));
+        if (fromHeader) bankId = fromHeader;
+      }
+    }
+  }
   const detectedBank = bankId === "unknown" ? null : BANK_LABELS[bankId];
   if (bankId === "unknown") {
     warnings.push(
@@ -110,6 +129,11 @@ export async function parseStatementFile(
     sourcePage: t.sourcePage,
     confidence: t.confidence,
     sourceLines: t.sourceLines,
+    valueDate: t.valueDate,
+    tranType: t.tranType,
+    tranId: t.tranId,
+    chequeDetails: t.chequeDetails,
+    drCr: t.drCr,
   }));
 
   return {

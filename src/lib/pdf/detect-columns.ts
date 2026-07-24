@@ -1,6 +1,17 @@
 import type { TextItem } from "./extract-text";
 
-export type ColumnRole = "date" | "description" | "amount" | "deposit" | "withdrawal" | "balance";
+export type ColumnRole =
+  | "date"
+  | "valueDate"
+  | "description"
+  | "amount"
+  | "deposit"
+  | "withdrawal"
+  | "balance"
+  | "tranType"
+  | "tranId"
+  | "chequeDetails"
+  | "drCrColumn";
 
 export type DetectedColumn = {
   role: ColumnRole;
@@ -18,13 +29,31 @@ export type HeaderInfo = {
 // header label could plausibly match more than one (it generally won't, but
 // e.g. "Amount" should never accidentally match "Withdrawal Amount" as both
 // deposit and withdrawal — longer/more specific keywords are checked first).
+//
+// "Value Date" used to map to the same "date" role as the primary
+// transaction date -- a real bug (both columns would collide into one
+// role). Split out as its own role, since some statements (confirmed via a
+// real sample) have both as genuinely distinct columns.
 const ROLE_KEYWORDS: Array<{ role: ColumnRole; patterns: RegExp[] }> = [
-  { role: "date", patterns: [/^date$/i, /^transaction date$/i, /^value date$/i, /^txn date$/i] },
+  { role: "valueDate", patterns: [/^value date$/i] },
+  { role: "date", patterns: [/^date$/i, /^transaction date$/i, /^txn date$/i] },
   { role: "description", patterns: [/^particulars?$/i, /^description$/i, /^narration$/i, /^details?$/i, /^transaction details?$/i] },
   { role: "withdrawal", patterns: [/^withdrawals?$/i, /^debit$/i, /^dr\.?$/i] },
   { role: "deposit", patterns: [/^deposits?$/i, /^credit$/i, /^cr\.?$/i] },
   { role: "balance", patterns: [/^balance$/i, /^closing balance$/i, /^running balance$/i, /^bal\.?$/i] },
   { role: "amount", patterns: [/^amount$/i, /^amt\.?$/i] },
+  // New optional columns, confirmed via a real sample (Federal Bank) --
+  // not every statement has these, but when present they're real, distinct
+  // columns, not something worth trying to infer from the description text.
+  { role: "tranType", patterns: [/^tran(?:saction)? type$/i, /^txn type$/i] },
+  { role: "tranId", patterns: [/^tran(?:saction)? id$/i, /^txn id$/i, /^reference no\.?$/i, /^ref\.? no\.?$/i] },
+  { role: "chequeDetails", patterns: [/^cheque details$/i, /^cheque no\.?$/i, /^chq no\.?$/i, /^cheque number$/i] },
+  // Recognized purely so its raw text (e.g. "Cr") gets excluded from the
+  // description via consumedColumnText in parse-transactions.ts -- NOT used
+  // as the source of the authoritative drCr field, since real evidence shows
+  // this column reflects balance standing, not transaction direction, and
+  // that's computed from the balance instead (see parse-transactions.ts).
+  { role: "drCrColumn", patterns: [/^dr\s*\/?\s*cr\.?$/i, /^dr\/cr$/i] },
 ];
 
 function matchRole(label: string): ColumnRole | null {
@@ -76,4 +105,16 @@ export function findHeaderRow(rows: Row[], pageWidth: number): HeaderInfo | null
 /** Finds which detected column a given x-coordinate falls under, if any. */
 export function classifyByColumn(x: number, columns: DetectedColumn[]): DetectedColumn | null {
   return columns.find((c) => x >= c.xStart && x < c.xEnd) ?? null;
+}
+
+/**
+ * Returns just the header labels found, in left-to-right order, e.g.
+ * ["Date", "Value Date", "Particulars", "Tran Type", ...]. Used as a
+ * secondary bank-identification signal (see bank-header-signatures.ts) --
+ * some banks' statements use a distinctive enough column set/order that it
+ * can help confirm or narrow down the issuing bank alongside the primary
+ * text-signature detection.
+ */
+export function headerLabelsInOrder(header: HeaderInfo): string[] {
+  return [...header.columns].sort((a, b) => a.xStart - b.xStart).map((c) => c.label.trim());
 }

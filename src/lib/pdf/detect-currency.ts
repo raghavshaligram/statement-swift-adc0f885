@@ -112,6 +112,7 @@ const BANK_CURRENCY_FALLBACK: Partial<Record<BankId, string>> = {
   icici: "INR",
   hdfc: "INR",
   sbi: "INR",
+  federal_bank: "INR",
 };
 
 export function detectCurrency(fullText: string, bankId: BankId | null): string | null {

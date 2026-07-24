@@ -41,6 +41,7 @@ export type BankId =
   | "icici"
   | "hdfc"
   | "sbi"
+  | "federal_bank"
   | "unknown";
 
 export const BANK_LABELS: Record<BankId, string> = {
@@ -66,6 +67,7 @@ export const BANK_LABELS: Record<BankId, string> = {
   icici: "ICICI Bank",
   hdfc: "HDFC Bank",
   sbi: "State Bank of India",
+  federal_bank: "Federal Bank",
   unknown: "Unrecognized bank (generic parser)",
 };
 
@@ -112,6 +114,10 @@ const SIGNATURES: Array<{ id: BankId; patterns: RegExp[] }> = [
   { id: "icici", patterns: [/\bicici bank\b/i, /\bicicibank\.com\b/i] },
   { id: "hdfc", patterns: [/\bhdfc bank\b/i, /\bhdfcbank\.com\b/i] },
   { id: "sbi", patterns: [/\bstate bank of india\b/i, /\bonlinesbi\b/i, /\bsbi\.co\.in\b/i] },
+  // Confirmed via a real sample statement this session (UPI/NEFT/IMPS
+  // transaction types, dripchatagency@okicici UPI handle) -- The Federal
+  // Bank Limited, a major Indian private-sector bank.
+  { id: "federal_bank", patterns: [/\bfederal bank\b/i, /\bfederalbank\.co\.in\b/i, /\bthe federal bank limited\b/i] },
 ];
 
 export function detectBank(fullText: string): BankId {
