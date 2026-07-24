@@ -5,6 +5,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { FileSpreadsheet, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AuthActions } from "@/components/user-menu";
 
 const NAV_LINKS = [
   { to: "/upload", label: "Upload" },
@@ -56,18 +57,7 @@ export function TopNav() {
           <span className="h-1.5 w-1.5 rounded-full bg-emerald" aria-hidden />
           local
         </div>
-        <Link
-          to="/signin"
-          className="text-sm font-medium text-white/80 transition-colors hover:text-white"
-        >
-          Log In
-        </Link>
-        <Link
-          to="/signup"
-          className="inline-flex items-center rounded-lg bg-emerald px-4 py-1.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-emerald/90"
-        >
-          Sign up for free
-        </Link>
+        <AuthActions variant="dark" />
       </div>
     </header>
   );

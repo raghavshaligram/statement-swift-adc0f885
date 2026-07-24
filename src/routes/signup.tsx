@@ -1,6 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, ArrowRight, Check, FileText, LayoutGrid, Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -26,12 +29,52 @@ function GoogleIcon({ className }: { className?: string }) {
 }
 
 function SignUpPage() {
+  const navigate = useNavigate();
   const [show, setShow] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function onEmailSignUp(e: React.FormEvent) {
+    e.preventDefault();
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters.");
+      return;
+    }
+    setLoading(true);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    if (data.session) {
+      toast.success("Account created — welcome!");
+      navigate({ to: "/upload" });
+    } else {
+      toast.success("Check your email to confirm your account.");
+    }
+  }
+
+  async function onGoogle() {
+    const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    if (res.error) {
+      toast.error(res.error.message ?? "Google sign-in failed.");
+      return;
+    }
+    if (res.redirected) return;
+    navigate({ to: "/upload" });
+  }
 
   return (
     <div className="min-h-screen bg-background lg:grid lg:grid-cols-2">
       {/* LEFT — form */}
       <div className="flex min-h-screen flex-col px-6 py-8 lg:px-16 lg:py-10">
+
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 text-ink">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald text-primary-foreground">
@@ -57,6 +100,7 @@ function SignUpPage() {
 
           <button
             type="button"
+            onClick={onGoogle}
             className="mt-8 flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-border bg-background text-sm font-semibold text-ink shadow-sm transition-colors hover:bg-surface-muted/60"
           >
             <GoogleIcon className="h-4 w-4" />
@@ -69,13 +113,16 @@ function SignUpPage() {
             <span className="h-px flex-1 bg-border" />
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" onSubmit={onEmailSignUp}>
             <div>
               <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-ink">Email</label>
               <input
                 id="email"
                 type="email"
+                required
                 autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
                 className="h-12 w-full rounded-xl border border-border bg-background px-4 text-sm text-ink placeholder:text-muted-foreground focus:border-emerald focus:outline-none focus:ring-4 focus:ring-emerald/15"
               />
@@ -87,7 +134,11 @@ function SignUpPage() {
                 <input
                   id="password"
                   type={show ? "text" : "password"}
+                  required
+                  minLength={8}
                   autoComplete="new-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="At least 8 characters"
                   className="h-12 w-full rounded-xl border border-border bg-background px-4 pr-11 text-sm text-ink placeholder:text-muted-foreground focus:border-emerald focus:outline-none focus:ring-4 focus:ring-emerald/15"
                 />
@@ -104,9 +155,10 @@ function SignUpPage() {
 
             <button
               type="submit"
-              className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-emerald/90"
+              disabled={loading}
+              className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-emerald/90 disabled:opacity-60"
             >
-              Create account
+              {loading ? "Creating account…" : "Create account"}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </button>
           </form>

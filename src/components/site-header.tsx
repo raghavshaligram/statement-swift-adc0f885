@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { LayoutGrid } from "lucide-react";
 import { FileSpreadsheet } from "lucide-react";
+import { AuthActions } from "@/components/user-menu";
 
 /**
  * Marketing site header — dark navbar matching the reference:
@@ -41,18 +42,7 @@ export function SiteHeader() {
             <span className="h-1.5 w-1.5 rounded-full bg-emerald" aria-hidden />
             local
           </div>
-          <Link
-            to="/signin"
-            className="text-sm font-semibold text-background/85 transition-colors hover:text-background"
-          >
-            Log In
-          </Link>
-          <Link
-            to="/signup"
-            className="inline-flex items-center rounded-lg bg-emerald px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-emerald/90"
-          >
-            Sign up for free
-          </Link>
+          <AuthActions variant="dark" />
         </div>
       </div>
     </header>

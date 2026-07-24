@@ -14,10 +14,12 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PreviewRouteImport } from './routes/preview'
 import { Route as IciciBankStatementToExcelRouteImport } from './routes/icici-bank-statement-to-excel'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ExportRouteImport } from './routes/export'
 import { Route as ChaseBankStatementToExcelRouteImport } from './routes/chase-bank-statement-to-excel'
 import { Route as BankStatementToTallyRouteImport } from './routes/bank-statement-to-tally'
@@ -50,6 +52,11 @@ const SigninRoute = SigninRouteImport.update({
   path: '/signin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -71,6 +78,11 @@ const IciciBankStatementToExcelRoute =
     path: '/icici-bank-statement-to-excel',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExportRoute = ExportRouteImport.update({
   id: '/export',
   path: '/export',
@@ -110,10 +122,12 @@ export interface FileRoutesByFullPath {
   '/bank-statement-to-tally': typeof BankStatementToTallyRoute
   '/chase-bank-statement-to-excel': typeof ChaseBankStatementToExcelRoute
   '/export': typeof ExportRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -127,10 +141,12 @@ export interface FileRoutesByTo {
   '/bank-statement-to-tally': typeof BankStatementToTallyRoute
   '/chase-bank-statement-to-excel': typeof ChaseBankStatementToExcelRoute
   '/export': typeof ExportRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -145,10 +161,12 @@ export interface FileRoutesById {
   '/bank-statement-to-tally': typeof BankStatementToTallyRoute
   '/chase-bank-statement-to-excel': typeof ChaseBankStatementToExcelRoute
   '/export': typeof ExportRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -164,10 +182,12 @@ export interface FileRouteTypes {
     | '/bank-statement-to-tally'
     | '/chase-bank-statement-to-excel'
     | '/export'
+    | '/forgot-password'
     | '/icici-bank-statement-to-excel'
     | '/preview'
     | '/pricing'
     | '/privacy'
+    | '/reset-password'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
@@ -181,10 +201,12 @@ export interface FileRouteTypes {
     | '/bank-statement-to-tally'
     | '/chase-bank-statement-to-excel'
     | '/export'
+    | '/forgot-password'
     | '/icici-bank-statement-to-excel'
     | '/preview'
     | '/pricing'
     | '/privacy'
+    | '/reset-password'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
@@ -198,10 +220,12 @@ export interface FileRouteTypes {
     | '/bank-statement-to-tally'
     | '/chase-bank-statement-to-excel'
     | '/export'
+    | '/forgot-password'
     | '/icici-bank-statement-to-excel'
     | '/preview'
     | '/pricing'
     | '/privacy'
+    | '/reset-password'
     | '/signin'
     | '/signup'
     | '/sitemap.xml'
@@ -216,10 +240,12 @@ export interface RootRouteChildren {
   BankStatementToTallyRoute: typeof BankStatementToTallyRoute
   ChaseBankStatementToExcelRoute: typeof ChaseBankStatementToExcelRoute
   ExportRoute: typeof ExportRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   IciciBankStatementToExcelRoute: typeof IciciBankStatementToExcelRoute
   PreviewRoute: typeof PreviewRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -264,6 +290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SigninRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -290,6 +323,13 @@ declare module '@tanstack/react-router' {
       path: '/icici-bank-statement-to-excel'
       fullPath: '/icici-bank-statement-to-excel'
       preLoaderRoute: typeof IciciBankStatementToExcelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/export': {
@@ -344,10 +384,12 @@ const rootRouteChildren: RootRouteChildren = {
   BankStatementToTallyRoute: BankStatementToTallyRoute,
   ChaseBankStatementToExcelRoute: ChaseBankStatementToExcelRoute,
   ExportRoute: ExportRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   IciciBankStatementToExcelRoute: IciciBankStatementToExcelRoute,
   PreviewRoute: PreviewRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
@@ -357,13 +399,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
