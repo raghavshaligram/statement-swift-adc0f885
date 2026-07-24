@@ -121,9 +121,9 @@ function Landing() {
               Bank statement to Excel <span className="text-emerald">software</span>
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Drop a PDF below and watch your transactions appear — parsed entirely in your
-              browser, in seconds. No signup, no credit card, works with banks in the US, UK, Canada,
-              India and beyond.
+              The bank statement converter that works everywhere — convert bank statements to
+              Excel, CSV, and more, entirely on your device. No signup, no credit card, works with
+              22+ banks across the US, UK, Canada, and India.
             </p>
           </ScrollReveal>
 
