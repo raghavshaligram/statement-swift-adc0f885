@@ -26,6 +26,10 @@ import { Route as BankStatementToTallyRouteImport } from './routes/bank-statemen
 import { Route as BankStatementToQifRouteImport } from './routes/bank-statement-to-qif'
 import { Route as BankStatementToOfxRouteImport } from './routes/bank-statement-to-ofx'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccountIndexRouteImport } from './routes/account/index'
+import { Route as AccountSettingsRouteImport } from './routes/account/settings'
+import { Route as AccountHistoryRouteImport } from './routes/account/history'
+import { Route as AccountBillingRouteImport } from './routes/account/billing'
 
 const UploadRoute = UploadRouteImport.update({
   id: '/upload',
@@ -114,6 +118,26 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountIndexRoute = AccountIndexRouteImport.update({
+  id: '/account/',
+  path: '/account/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountSettingsRoute = AccountSettingsRouteImport.update({
+  id: '/account/settings',
+  path: '/account/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountHistoryRoute = AccountHistoryRouteImport.update({
+  id: '/account/history',
+  path: '/account/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountBillingRoute = AccountBillingRouteImport.update({
+  id: '/account/billing',
+  path: '/account/billing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -133,6 +157,10 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
+  '/account/billing': typeof AccountBillingRoute
+  '/account/history': typeof AccountHistoryRoute
+  '/account/settings': typeof AccountSettingsRoute
+  '/account/': typeof AccountIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -152,6 +180,10 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
+  '/account/billing': typeof AccountBillingRoute
+  '/account/history': typeof AccountHistoryRoute
+  '/account/settings': typeof AccountSettingsRoute
+  '/account': typeof AccountIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -172,6 +204,10 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
+  '/account/billing': typeof AccountBillingRoute
+  '/account/history': typeof AccountHistoryRoute
+  '/account/settings': typeof AccountSettingsRoute
+  '/account/': typeof AccountIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -193,6 +229,10 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/upload'
+    | '/account/billing'
+    | '/account/history'
+    | '/account/settings'
+    | '/account/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -212,6 +252,10 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/upload'
+    | '/account/billing'
+    | '/account/history'
+    | '/account/settings'
+    | '/account'
   id:
     | '__root__'
     | '/'
@@ -231,6 +275,10 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/upload'
+    | '/account/billing'
+    | '/account/history'
+    | '/account/settings'
+    | '/account/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -251,6 +299,10 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   UploadRoute: typeof UploadRoute
+  AccountBillingRoute: typeof AccountBillingRoute
+  AccountHistoryRoute: typeof AccountHistoryRoute
+  AccountSettingsRoute: typeof AccountSettingsRoute
+  AccountIndexRoute: typeof AccountIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -374,6 +426,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account/': {
+      id: '/account/'
+      path: '/account'
+      fullPath: '/account/'
+      preLoaderRoute: typeof AccountIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/settings': {
+      id: '/account/settings'
+      path: '/account/settings'
+      fullPath: '/account/settings'
+      preLoaderRoute: typeof AccountSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/history': {
+      id: '/account/history'
+      path: '/account/history'
+      fullPath: '/account/history'
+      preLoaderRoute: typeof AccountHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/billing': {
+      id: '/account/billing'
+      path: '/account/billing'
+      fullPath: '/account/billing'
+      preLoaderRoute: typeof AccountBillingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -395,6 +475,10 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   UploadRoute: UploadRoute,
+  AccountBillingRoute: AccountBillingRoute,
+  AccountHistoryRoute: AccountHistoryRoute,
+  AccountSettingsRoute: AccountSettingsRoute,
+  AccountIndexRoute: AccountIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
