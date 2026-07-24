@@ -73,41 +73,35 @@ function ExportPage() {
 
   return (
     <AppShell
-      title="Export"
       toolbar={
         <Link
           to="/preview"
-          className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-xs font-medium text-ink hover:bg-surface-muted"
+          className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-muted"
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Back to preview
         </Link>
       }
     >
-      <div className="space-y-6">
-        <div className="rounded-lg border border-emerald/30 bg-emerald-soft/40 px-4 py-3 text-sm text-accent-foreground">
-          <span className="inline-flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-emerald" />
-            All exports are generated locally in your browser — no data leaves your device.
-          </span>
+      <div className="space-y-4">
+        <div>
+          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald">Export</div>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-ink">Export transactions</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Choose a format, configure options, then download.</p>
         </div>
 
-        {/* Format + options (left) / summary panel (right) side by side --
-            this pairing (not a stacked single column) is what the freed-up
-            width from removing the sidebar buys us. */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="space-y-6 lg:col-span-2">
+        <div className="grid gap-4 lg:grid-cols-3">
+          {/* Left: format grid + options */}
+          <div className="space-y-4 lg:col-span-2">
             <div>
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Choose an export format
-              </h2>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Format</div>
+              <div className="mt-2 grid gap-2.5 sm:grid-cols-2">
                 {FORMATS.map((f) => {
                   const active = selected === f.key;
                   return (
                     <button
                       key={f.key}
                       onClick={() => setSelected(f.key)}
-                      className={`group relative rounded-xl border p-5 text-left transition ${
+                      className={`group relative rounded-lg border p-3 text-left transition ${
                         active
                           ? "border-emerald bg-emerald-soft/40 shadow-sm"
                           : "border-border bg-card hover:border-emerald/50"
@@ -118,64 +112,79 @@ function ExportPage() {
                           PRO
                         </span>
                       )}
-                      <div className="flex items-start justify-between">
-                        <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${
+                      <div className="flex items-start gap-3">
+                        <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-md ${
                           f.tone === "emerald" ? "bg-emerald text-primary-foreground" : "bg-surface-muted text-ink"
                         }`}>
-                          <f.icon className="h-5 w-5" />
+                          <f.icon className="h-4 w-4" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-baseline gap-1.5">
+                            <span className="text-sm font-semibold text-ink">{f.name}</span>
+                            <span className="font-mono text-[11px] text-muted-foreground">{f.ext}</span>
+                          </div>
+                          <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-muted-foreground">{f.desc}</p>
                         </div>
                         {active && (
-                          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald text-primary-foreground">
-                            <Check className="h-3 w-3" />
+                          <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald text-primary-foreground">
+                            <Check className="h-2.5 w-2.5" />
                           </div>
                         )}
                       </div>
-                      <div className="mt-4 flex items-baseline gap-2">
-                        <span className="text-base font-semibold text-ink">{f.name}</span>
-                        <span className="font-mono text-xs text-muted-foreground">{f.ext}</span>
-                      </div>
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{f.desc}</p>
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-card p-5">
-              <div className="text-sm font-semibold text-ink">Export options</div>
-              <div className="mt-4 space-y-3 text-sm">
+            <div>
+              <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Options</div>
+              <div className="mt-2 divide-y divide-border rounded-lg border border-border bg-card">
                 <Toggle
-                  label="Include running balance column"
-                  checked={options.includeBalance}
-                  onChange={(v) => setOptions((o) => ({ ...o, includeBalance: v }))}
-                />
-                <Toggle
-                  label="Split debit / credit into separate columns"
-                  checked={options.splitDebitCredit}
-                  onChange={(v) => setOptions((o) => ({ ...o, splitDebitCredit: v }))}
-                />
-                <Toggle
-                  label="Normalize dates to ISO (YYYY-MM-DD)"
-                  checked={options.normalizeDatesIso}
-                  onChange={(v) => setOptions((o) => ({ ...o, normalizeDatesIso: v }))}
-                />
-                <Toggle
-                  label="Include source-page reference column"
-                  checked={options.includeSourcePage}
-                  onChange={(v) => setOptions((o) => ({ ...o, includeSourcePage: v }))}
-                />
-                <Toggle
-                  label="One sheet per statement (Excel only)"
-                  checked={oneSheetPerStatement}
-                  onChange={setOneSheetPerStatement}
+                  label="Header row"
+                  sub="First row contains column labels"
+                  checked={true}
+                  onChange={() => {}}
                 />
                 <Toggle
                   label="Currency symbol"
+                  sub={`Include ${currency ?? "₹"} in amount columns`}
                   checked={options.includeCurrencySymbol}
                   onChange={(v) => setOptions((o) => ({ ...o, includeCurrencySymbol: v }))}
                 />
                 <Toggle
+                  label="Running balance column"
+                  sub="Balance-after-transaction column"
+                  checked={options.includeBalance}
+                  onChange={(v) => setOptions((o) => ({ ...o, includeBalance: v }))}
+                />
+                <Toggle
+                  label="Split debit / credit"
+                  sub="Separate debit and credit columns"
+                  checked={options.splitDebitCredit}
+                  onChange={(v) => setOptions((o) => ({ ...o, splitDebitCredit: v }))}
+                />
+                <Toggle
+                  label="Normalize dates to ISO"
+                  sub="YYYY-MM-DD format"
+                  checked={options.normalizeDatesIso}
+                  onChange={(v) => setOptions((o) => ({ ...o, normalizeDatesIso: v }))}
+                />
+                <Toggle
+                  label="Source-page reference"
+                  sub="Include PDF page number column"
+                  checked={options.includeSourcePage}
+                  onChange={(v) => setOptions((o) => ({ ...o, includeSourcePage: v }))}
+                />
+                <Toggle
+                  label="One sheet per statement"
+                  sub="Excel only"
+                  checked={oneSheetPerStatement}
+                  onChange={setOneSheetPerStatement}
+                />
+                <Toggle
                   label="Omit low-confidence rows"
+                  sub="Skip amber/red flagged rows"
                   checked={options.omitLowConfidence}
                   onChange={(v) => setOptions((o) => ({ ...o, omitLowConfidence: v }))}
                 />
@@ -183,43 +192,46 @@ function ExportPage() {
             </div>
           </div>
 
+          {/* Right: sticky summary + trust note */}
           <div className="lg:col-span-1">
-            <div className="rounded-xl border border-border bg-ink p-5 text-background">
-              <div className="text-xs font-semibold uppercase tracking-wider text-emerald">
-                Export summary
+            <div className="lg:sticky lg:top-20 space-y-3">
+              <div className="rounded-xl border border-border bg-ink p-4 text-background">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-background/50">
+                  Export summary
+                </div>
+                <dl className="mt-3 space-y-2 text-xs">
+                  <SummaryRow label="Format" value={`${FORMATS.find((f) => f.key === selected)?.name} (${FORMATS.find((f) => f.key === selected)?.ext})`} />
+                  <SummaryRow label="Rows" value={`${includedRows.length} transactions`} />
+                  <SummaryRow label="Columns" value={columnList.join(", ")} />
+                  <SummaryRow label="Header row" value="Yes" />
+                  <SummaryRow label="Source" value={statements[0]?.fileName ?? baseFileName} mono />
+                </dl>
+                <button
+                  onClick={handleDownload}
+                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-emerald/90"
+                >
+                  <Download className="h-4 w-4" />
+                  {downloaded[selected] ? `Re-download ${FORMATS.find((f) => f.key === selected)?.ext}` : `Download ${FORMATS.find((f) => f.key === selected)?.ext}`}
+                </button>
+                {FORMATS.find((f) => f.key === selected)?.pro && (
+                  <p className="mt-2 text-center text-[11px] text-amber-400/90">
+                    {FORMATS.find((f) => f.key === selected)?.name} requires Pro
+                  </p>
+                )}
               </div>
-              <dl className="mt-4 space-y-2.5 text-xs">
-                <SummaryRow label="Format" value={`${FORMATS.find((f) => f.key === selected)?.name} (${FORMATS.find((f) => f.key === selected)?.ext})`} />
-                <SummaryRow label="Rows" value={`${includedRows.length} transactions`} />
-                <SummaryRow label="Columns" value={columnList.join(", ")} />
-                <SummaryRow label="Header row" value="Yes" />
-                <SummaryRow label="Source file" value={statements[0]?.fileName ?? baseFileName} mono />
-              </dl>
-              <button
-                onClick={handleDownload}
-                className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-emerald/90"
+
+              <Link
+                to="/upload"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-semibold text-ink transition hover:bg-surface-muted"
               >
-                <Download className="h-4 w-4" />
-                {downloaded[selected] ? "Downloaded — click to re-download" : `Download ${FORMATS.find((f) => f.key === selected)?.name}`}
-              </button>
-              {FORMATS.find((f) => f.key === selected)?.pro && (
-                <p className="mt-2 text-center text-[11px] text-amber-400/90">
-                  {FORMATS.find((f) => f.key === selected)?.name} requires Pro
-                </p>
-              )}
-              <div className="mt-3 text-center text-[11px] text-background/50">
-                Generated locally · nothing uploaded
+                <ArrowLeft className="h-4 w-4 rotate-180" /> Convert another file
+              </Link>
+
+              <div className="flex items-start gap-2 rounded-lg border border-emerald/30 bg-emerald-soft/40 px-3 py-2.5 text-xs text-accent-foreground">
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald" />
+                <span>File is generated on this device and downloaded directly. No data is transmitted.</span>
               </div>
             </div>
-          </div>
-        </div>
-
-        <div className="rounded-xl border border-border bg-card p-5">
-          <div className="text-sm font-semibold text-ink">What's next?</div>
-          <div className="mt-3 grid gap-3 sm:grid-cols-3 text-sm">
-            <NextCard title="Convert another statement" body="Your queue is cleared — drop a new PDF." to="/upload" />
-            <NextCard title="Side-by-side review" body="Compare extracted rows against the raw statement text." to="/preview" />
-            <NextCard title="Get Pro" body="Unlimited pages per statement, plus Tally/OFX/QIF/QBO formats." to="/pricing" />
           </div>
         </div>
       </div>
@@ -227,14 +239,17 @@ function ExportPage() {
   );
 }
 
-function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+function Toggle({ label, sub, checked, onChange }: { label: string; sub?: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
-    <label className="flex items-center justify-between rounded-md border border-border bg-surface-muted/40 px-3 py-2">
-      <span className="text-ink">{label}</span>
+    <label className="flex items-center justify-between gap-4 px-4 py-3">
+      <div className="min-w-0">
+        <div className="text-sm font-semibold text-ink">{label}</div>
+        {sub && <div className="mt-0.5 text-[11px] text-muted-foreground">{sub}</div>}
+      </div>
       <button
         type="button"
         onClick={() => onChange(!checked)}
-        className={`relative h-5 w-9 rounded-full transition ${checked ? "bg-emerald" : "bg-border"}`}
+        className={`relative h-5 w-9 shrink-0 rounded-full transition ${checked ? "bg-emerald" : "bg-border"}`}
         aria-pressed={checked}
       >
         <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-background shadow transition ${checked ? "left-4" : "left-0.5"}`} />
@@ -252,11 +267,3 @@ function SummaryRow({ label, value, mono }: { label: string; value: string; mono
   );
 }
 
-function NextCard({ title, body, to }: { title: string; body: string; to: "/upload" | "/pricing" | "/preview" }) {
-  return (
-    <Link to={to} className="rounded-lg border border-border bg-surface-muted/40 p-4 transition hover:border-emerald hover:bg-emerald-soft/30">
-      <div className="text-sm font-semibold text-ink">{title}</div>
-      <div className="mt-1 text-xs text-muted-foreground">{body}</div>
-    </Link>
-  );
-}
