@@ -92,10 +92,20 @@ function SignInPage() {
           <button
             type="button"
             onClick={onGoogle}
-            className="mt-8 flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-border bg-background text-sm font-semibold text-ink shadow-sm transition-colors hover:bg-surface-muted/60"
+            disabled={googleLoading}
+            className="mt-8 flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-border bg-background text-sm font-semibold text-ink shadow-sm transition-colors hover:bg-surface-muted/60 disabled:opacity-60"
           >
-            <GoogleIcon className="h-4 w-4" />
-            Continue with Google
+            {googleLoading ? (
+              <>
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-ink/30 border-t-ink" aria-hidden />
+                Connecting to Google…
+              </>
+            ) : (
+              <>
+                <GoogleIcon className="h-4 w-4" />
+                Continue with Google
+              </>
+            )}
           </button>
 
           <div className="my-6 flex items-center gap-3 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
