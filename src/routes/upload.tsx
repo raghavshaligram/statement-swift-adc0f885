@@ -7,7 +7,8 @@ import { ParseQueue } from "@/components/parse-queue";
 import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
 import { getPdfPageCount } from "@/lib/pdf/extract-text";
-import { ANONYMOUS_MAX_PAGES } from "@/lib/pricing-constants";
+import { ANONYMOUS_MAX_PAGES, SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
+import { useAuth } from "@/hooks/use-auth";
 import { OCR_LANGUAGES } from "@/lib/pdf/ocr-languages";
 
 export const Route = createFileRoute("/upload")({
@@ -24,6 +25,8 @@ export const Route = createFileRoute("/upload")({
 
 function UploadPage() {
   const nav = useNavigate();
+  const { user } = useAuth();
+  const maxPages = user ? SIGNED_IN_MAX_PAGES : ANONYMOUS_MAX_PAGES;
   const [pageLimitError, setPageLimitError] = useState<string | null>(null);
   const [ocrLanguage, setOcrLanguage] = useState<string>("eng");
 
@@ -48,13 +51,16 @@ function UploadPage() {
     const pageCounts = await Promise.all(
       arr.map(async (f) => ({ file: f, pages: await getPdfPageCount(f) }))
     );
-    const tooLong = pageCounts.filter((p) => p.pages > ANONYMOUS_MAX_PAGES);
+    const tooLong = pageCounts.filter((p) => p.pages > maxPages);
     if (tooLong.length > 0) {
       const first = tooLong[0];
+      const suggestion = user
+        ? "Upgrade to Pro to convert larger statements."
+        : "Sign up free for a higher limit, or upgrade to Pro for no limit at all.";
       setPageLimitError(
         tooLong.length === 1
-          ? `${first.file.name} is too large for the free demo. Sign up to convert larger statements.`
-          : `${tooLong.map((t) => t.file.name).join(", ")} are too large for the free demo. Sign up to convert larger statements.`
+          ? `${first.file.name} is too large for your current plan. ${suggestion}`
+          : `${tooLong.map((t) => t.file.name).join(", ")} are too large for your current plan. ${suggestion}`
       );
       return;
     }
@@ -110,16 +116,16 @@ function UploadPage() {
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
               <div>
                 <div className="font-semibold text-amber-900">
-                  This demo supports up to {ANONYMOUS_MAX_PAGES} pages
+                  Your current plan supports up to {maxPages} pages
                 </div>
                 <div className="text-sm text-amber-800">{pageLimitError}</div>
               </div>
             </div>
             <Link
-              to="/signup"
+              to={user ? "/account/billing" : "/signup"}
               className="shrink-0 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-600"
             >
-              Sign up free
+              {user ? "Upgrade to Pro" : "Sign up free"}
             </Link>
           </div>
         )}

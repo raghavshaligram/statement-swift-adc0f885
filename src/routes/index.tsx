@@ -26,7 +26,7 @@ import { BANK_LABELS } from "@/lib/pdf/bank-detection";
 import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
 import { getPdfPageCount } from "@/lib/pdf/extract-text";
-import { ANONYMOUS_MAX_PAGES } from "@/lib/pricing-constants";
+import { ANONYMOUS_MAX_PAGES, SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -349,7 +349,7 @@ function Landing() {
                 </div>
                 <p className="mt-3 text-sm text-muted-foreground">
                   Unlimited conversions, always. Try instantly with no signup (up to {ANONYMOUS_MAX_PAGES} pages
-                  per statement), or sign up free for up to 10 pages. Excel and CSV export.
+                  per statement), or sign up free for up to {SIGNED_IN_MAX_PAGES} pages. Excel and CSV export.
                 </p>
               </div>
             </ScrollRevealItem>
@@ -414,6 +414,8 @@ function Landing() {
 
 function HeroUploadCard() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const maxPages = user ? SIGNED_IN_MAX_PAGES : ANONYMOUS_MAX_PAGES;
   const phase = useStatementStore((s) => s.phase);
   const pendingFiles = useStatementStore((s) => s.pendingFiles);
   const reset = useStatementStore((s) => s.reset);
@@ -436,12 +438,15 @@ function HeroUploadCard() {
     const pageCounts = await Promise.all(
       files.map(async (f) => ({ file: f, pages: await getPdfPageCount(f) }))
     );
-    const tooLong = pageCounts.filter((p) => p.pages > ANONYMOUS_MAX_PAGES);
+    const tooLong = pageCounts.filter((p) => p.pages > maxPages);
     if (tooLong.length > 0) {
+      const suggestion = user
+        ? "Upgrade to Pro to convert larger statements."
+        : "Sign up free for a higher limit, or upgrade to Pro for no limit at all.";
       setPageLimitError(
         tooLong.length === 1
-          ? `${tooLong[0].file.name} is too large for the free demo. Sign up to convert larger statements.`
-          : `${tooLong.map((t) => t.file.name).join(", ")} are too large for the free demo. Sign up to convert larger statements.`
+          ? `${tooLong[0].file.name} is too large for your current plan. ${suggestion}`
+          : `${tooLong.map((t) => t.file.name).join(", ")} are too large for your current plan. ${suggestion}`
       );
       return;
     }
@@ -503,16 +508,16 @@ function HeroUploadCard() {
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
                 <div>
                   <div className="text-sm font-semibold text-amber-900">
-                    This demo supports up to {ANONYMOUS_MAX_PAGES} pages
+                    Your current plan supports up to {maxPages} pages
                   </div>
                   <div className="text-xs text-amber-800">{pageLimitError}</div>
                 </div>
               </div>
               <Link
-                to="/signup"
+                to={user ? "/account/billing" : "/signup"}
                 className="shrink-0 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-amber-600"
               >
-                Sign up free
+                {user ? "Upgrade to Pro" : "Sign up free"}
               </Link>
             </div>
           ) : null}
