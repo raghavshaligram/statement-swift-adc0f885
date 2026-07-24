@@ -1,6 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, ArrowRight, Check, FileText, LayoutGrid, Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -26,12 +29,52 @@ function GoogleIcon({ className }: { className?: string }) {
 }
 
 function SignUpPage() {
+  const navigate = useNavigate();
   const [show, setShow] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function onEmailSignUp(e: React.FormEvent) {
+    e.preventDefault();
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters.");
+      return;
+    }
+    setLoading(true);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    if (data.session) {
+      toast.success("Account created — welcome!");
+      navigate({ to: "/upload" });
+    } else {
+      toast.success("Check your email to confirm your account.");
+    }
+  }
+
+  async function onGoogle() {
+    const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    if (res.error) {
+      toast.error(res.error.message ?? "Google sign-in failed.");
+      return;
+    }
+    if (res.redirected) return;
+    navigate({ to: "/upload" });
+  }
 
   return (
     <div className="min-h-screen bg-background lg:grid lg:grid-cols-2">
       {/* LEFT — form */}
       <div className="flex min-h-screen flex-col px-6 py-8 lg:px-16 lg:py-10">
+
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 text-ink">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald text-primary-foreground">
