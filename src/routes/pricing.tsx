@@ -105,6 +105,16 @@ const COMPARISON_ROWS: Array<{ label: string; values: Record<string, string> }> 
       usc: "US banks only",
     },
   },
+  {
+    label: "Reads scans/photos of statements",
+    values: {
+      ll: "Yes — on-device OCR",
+      capy: "No — PDF only for statements (photos supported for receipts only)",
+      docu: "Scanned PDFs only, not raw photos",
+      bsc: "Not confirmed",
+      usc: "Not confirmed",
+    },
+  },
 ];
 
 const FAQ: Array<[string, string]> = [

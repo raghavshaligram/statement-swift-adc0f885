@@ -15,9 +15,9 @@ export const Route = createFileRoute("/upload")({
   head: () => ({
     meta: [
       { title: "Convert · LedgerLocal" },
-      { name: "description", content: "Upload PDF bank statements. Processing happens on your device." },
+      { name: "description", content: "Upload a bank statement — PDF, scan, or photo. Processing happens on your device." },
       { property: "og:title", content: "Convert · LedgerLocal" },
-      { property: "og:description", content: "On-device PDF to Excel conversion." },
+      { property: "og:description", content: "On-device bank statement to Excel conversion — PDF, scan, or photo." },
     ],
   }),
   component: UploadPage,
@@ -153,8 +153,8 @@ function UploadPage() {
           <div className="grid gap-3 sm:grid-cols-3">
             {[
               ["Multi-bank bundles", "Drop statements from different banks together."],
-              ["Global bank coverage", "Chase, BofA, Wells Fargo, ICICI, HDFC, SBI and more."],
-              ["Text-based PDFs", "Works with any statement pdf.js can read text from."],
+              ["22+ banks, 4 countries", "Named detection across the US, UK, Canada, and India, plus a generic parser for any other bank."],
+              ["PDF, scan, or photo", "Text-based PDFs read directly; scanned pages and JPG/PNG/WEBP photos fall back to on-device OCR."],
             ].map(([t, b]) => (
               <div key={t} className="rounded-lg border border-border bg-card p-4">
                 <div className="text-sm font-semibold text-ink">{t}</div>
