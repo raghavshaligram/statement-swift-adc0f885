@@ -36,13 +36,13 @@ const PRO_ROWS: string[] = [
   "All 6 export formats (Excel, CSV, Tally XML, OFX, QIF, QBO)",
 ];
 
-const COMPARISON_COLS = [
+const COMPARISON_COLS: Array<{ key: string; label: string; highlight?: boolean }> = [
   { key: "ll", label: "LedgerLocal", highlight: true },
   { key: "capy", label: "CapyParse" },
   { key: "docu", label: "DocuClipper" },
   { key: "bsc", label: "bankstatementconverter.com" },
   { key: "usc", label: "usstatementconverter.com" },
-] as const;
+];
 
 const COMPARISON_ROWS: Array<{ label: string; values: Record<string, string> }> = [
   {
