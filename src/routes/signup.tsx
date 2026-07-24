@@ -113,13 +113,16 @@ function SignUpPage() {
             <span className="h-px flex-1 bg-border" />
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" onSubmit={onEmailSignUp}>
             <div>
               <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-ink">Email</label>
               <input
                 id="email"
                 type="email"
+                required
                 autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
                 className="h-12 w-full rounded-xl border border-border bg-background px-4 text-sm text-ink placeholder:text-muted-foreground focus:border-emerald focus:outline-none focus:ring-4 focus:ring-emerald/15"
               />
@@ -131,7 +134,11 @@ function SignUpPage() {
                 <input
                   id="password"
                   type={show ? "text" : "password"}
+                  required
+                  minLength={8}
                   autoComplete="new-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="At least 8 characters"
                   className="h-12 w-full rounded-xl border border-border bg-background px-4 pr-11 text-sm text-ink placeholder:text-muted-foreground focus:border-emerald focus:outline-none focus:ring-4 focus:ring-emerald/15"
                 />
@@ -148,9 +155,10 @@ function SignUpPage() {
 
             <button
               type="submit"
-              className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-emerald/90"
+              disabled={loading}
+              className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-emerald/90 disabled:opacity-60"
             >
-              Create account
+              {loading ? "Creating account…" : "Create account"}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </button>
           </form>
