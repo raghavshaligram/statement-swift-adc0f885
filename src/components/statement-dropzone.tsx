@@ -87,6 +87,11 @@ export function StatementDropzone({
         <ShieldCheck className={compact ? "h-2.5 w-2.5 text-emerald" : "h-3 w-3 text-emerald"} />
         Processed on your device — nothing uploaded, ever
       </div>
+      {!compact && (
+        <div className="text-center text-xs text-muted-foreground">
+          PDF only · Up to 6 pages · Unlimited conversions
+        </div>
+      )}
       <input
         ref={inputRef}
         type="file"
