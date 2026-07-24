@@ -195,7 +195,7 @@ function Landing() {
               Global coverage from day one
             </div>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-              Works with any bank's standard PDF statement
+              The bank statement converter that works with any bank's PDF
             </h2>
             <p className="mt-4 text-muted-foreground">
               Named support for these banks today, with a generic parsing engine handling

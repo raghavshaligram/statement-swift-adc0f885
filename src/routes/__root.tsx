@@ -78,14 +78,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "LedgerLocal — Bank Statement to Excel Software" },
+      { title: "LedgerLocal — Bank Statement Converter & Excel Software" },
       {
         name: "description",
         content:
-          "LedgerLocal converts PDF bank statements into clean, editable Excel spreadsheets — 100% on-device. Works with major banks across the US, UK, Canada, and India, and more.",
+          "LedgerLocal is a bank statement converter that turns PDF statements into clean, editable Excel spreadsheets — 100% on-device. Works with 22+ banks across the US, UK, Canada, and India.",
       },
       { name: "author", content: "LedgerLocal" },
-      { property: "og:title", content: "LedgerLocal — Bank Statement to Excel Software" },
+      { property: "og:title", content: "LedgerLocal — Bank Statement Converter & Excel Software" },
       {
         property: "og:description",
         content: "Convert PDF bank statements to Excel, CSV, Tally, OFX, QIF, QBO. 100% on-device. Free up to 10 pages per statement.",
