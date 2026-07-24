@@ -19,6 +19,22 @@
      weight steps: 400 (normal) and 600 (semibold/medium). Bold stays 700. */
   --font-weight-medium: 600;
 
+  /* Heading-sized type scale reduced by 2px vs Tailwind defaults, applied
+     globally so every heading across the app shrinks uniformly. Body sizes
+     (xs/sm/base/lg/xl) are left at defaults. */
+  --text-2xl: 1.375rem;   /* was 1.5rem   (24 -> 22) */
+  --text-2xl--line-height: 1.85rem;
+  --text-3xl: 1.75rem;    /* was 1.875rem (30 -> 28) */
+  --text-3xl--line-height: 2.125rem;
+  --text-4xl: 2.125rem;   /* was 2.25rem  (36 -> 34) */
+  --text-4xl--line-height: 2.5rem;
+  --text-5xl: 2.875rem;   /* was 3rem     (48 -> 46) */
+  --text-5xl--line-height: 1;
+  --text-6xl: 3.625rem;   /* was 3.75rem  (60 -> 58) */
+  --text-6xl--line-height: 1;
+  --text-7xl: 4.375rem;   /* was 4.5rem   (72 -> 70) */
+  --text-7xl--line-height: 1;
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
