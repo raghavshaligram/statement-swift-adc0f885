@@ -85,6 +85,21 @@ function Landing() {
   useEffect(() => {
     if (!loading && user) navigate({ to: "/upload", replace: true });
   }, [user, loading, navigate]);
+  useEffect(() => {
+    if (loading || user) return;
+    const hash = window.location.hash.slice(1);
+    if (!hash) return;
+    let tries = 0;
+    const tick = () => {
+      const el = document.getElementById(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else if (tries++ < 20) {
+        setTimeout(tick, 100);
+      }
+    };
+    tick();
+  }, [loading, user]);
   if (loading || user) return <div className="min-h-screen bg-background" />;
   return (
     <div className="min-h-screen bg-background">
