@@ -25,7 +25,7 @@ export function SiteHeader() {
 
         {/* Center: primary marketing nav */}
         <nav className="hidden items-center gap-10 text-sm font-semibold md:flex">
-          <a href="#how-it-works" className="text-background/80 transition-colors hover:text-background">
+          <a href="/#how-it-works" className="text-background/80 transition-colors hover:text-background">
             How it works
           </a>
           <Link to="/pricing" className="text-background/80 transition-colors hover:text-background">
