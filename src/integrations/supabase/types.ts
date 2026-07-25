@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      page_usage: {
+        Row: {
+          lifetime_pages_used: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          lifetime_pages_used?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          lifetime_pages_used?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -67,11 +85,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_page_usage: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      increment_page_usage: {
+        Args: { p_count: number; p_limit: number }
         Returns: boolean
       }
     }
