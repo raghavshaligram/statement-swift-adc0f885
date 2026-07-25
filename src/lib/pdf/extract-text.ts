@@ -113,10 +113,13 @@ export async function getPdfPageCount(file: File): Promise<number> {
 export async function getStatementPageCount(file: File): Promise<number> {
   const isImage = file.type.startsWith("image/") || /\.(jpe?g|png|webp)$/i.test(file.name);
   const isIif = /\.iif$/i.test(file.name);
-  // Neither images nor IIF files have a real "page" concept -- IIF is plain
-  // structured text (a list of transactions, not pages), so it counts as 1
-  // for the free-tier limit, same convention as a single image upload.
-  if (isImage || isIif) return 1;
+  const isCsv = /\.csv$/i.test(file.name) || file.type === "text/csv";
+  // Neither images, IIF, nor CSV files have a real "page" concept -- these
+  // are plain structured text (a list of transactions, not pages), so each
+  // counts as 1. In practice CSV/IIF never reach this function at all,
+  // since isPageLimitExempt filters them out before the page-count check
+  // runs -- this is just defensive consistency if it's ever called directly.
+  if (isImage || isIif || isCsv) return 1;
   return getPdfPageCount(file);
 }
 
@@ -136,5 +139,5 @@ export async function getStatementPageCount(file: File): Promise<number> {
  * be gated as their own premium feature.
  */
 export function isPageLimitExempt(file: File): boolean {
-  return /\.iif$/i.test(file.name);
+  return /\.(iif|csv)$/i.test(file.name) || file.type === "text/csv";
 }

@@ -7,6 +7,7 @@ import { ocrPdfToTextItems, ocrImageToTextItems, looksLikeScannedPage } from "./
 import { findHeaderRow, headerLabelsInOrder } from "./detect-columns";
 import { detectBankFromHeaderSignature } from "./bank-header-signatures";
 import { parseIifText, iifResultToTransactions } from "../iif/parse-iif";
+import { parseCsvText } from "../csv/parse-csv";
 import type { PageText } from "./extract-text";
 import type { ParsedStatement, Transaction } from "../statement-store";
 
@@ -33,6 +34,45 @@ export async function parseStatementFile(
       fileSizeBytes: file.size,
       pageCount: 1,
       detectedBank: null, // IIF exports don't typically name the issuing bank
+      currency: detectCurrency(content, null),
+      transactions,
+      warnings: result.warnings,
+    };
+  }
+
+  if (/\.csv$/i.test(file.name) || file.type === "text/csv") {
+    // Same short-circuit pattern as IIF -- generic structured text, not a
+    // PDF/image, and a genuinely different parsing problem (auto-detected
+    // headers + delimiter, not layout inference).
+    const content = await file.text();
+    const result = parseCsvText(content);
+    onPageParsed?.(1, 1);
+    const transactions: Transaction[] = result.transactions.map((t, i) => ({
+      id: `${file.name}-${i}`,
+      date: t.date,
+      description: t.description,
+      amount: t.amount,
+      balance: t.balance,
+      sourceFile: file.name,
+      sourcePage: 1,
+      // Auto-detected header mapping is a real, unambiguous signal once it
+      // succeeds (unlike a layout-inferred PDF read) -- but genuinely lower
+      // confidence than IIF's fully-structured tags, since CSV column
+      // *names* are inferred from arbitrary, non-standardized header text
+      // rather than a fixed schema.
+      confidence: 88,
+      sourceLines: [],
+      valueDate: null,
+      tranType: null,
+      tranId: null,
+      chequeDetails: null,
+      drCr: t.amount >= 0 ? "Cr" : "Dr",
+    }));
+    return {
+      fileName: file.name,
+      fileSizeBytes: file.size,
+      pageCount: 1,
+      detectedBank: null,
       currency: detectCurrency(content, null),
       transactions,
       warnings: result.warnings,
