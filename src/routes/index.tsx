@@ -349,8 +349,8 @@ function Landing() {
                   <span className="text-sm text-muted-foreground">no signup required</span>
                 </div>
                 <p className="mt-3 text-sm text-muted-foreground">
-                  Try instantly with no signup — unlimited separate conversions, up to {ANONYMOUS_MAX_PAGES} pages
-                  each. Sign up free for a {SIGNED_IN_MAX_PAGES}-page lifetime allowance. Excel and CSV export.
+                  Try instantly with no signup — up to {ANONYMOUS_MAX_PAGES} pages per conversion, as many
+                  conversions as you like. Sign up free for a {SIGNED_IN_MAX_PAGES}-page lifetime allowance. Excel and CSV export.
                 </p>
               </div>
             </ScrollRevealItem>

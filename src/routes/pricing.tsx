@@ -21,7 +21,7 @@ export const Route = createFileRoute("/pricing")({
 });
 
 const FREE_ROWS: Array<[string, boolean]> = [
-  ["Unlimited conversions with no signup (6 pages each)", true],
+  ["6 pages per conversion, no signup needed", true],
   ["10-page lifetime allowance once signed up", true],
   ["Excel and CSV export", true],
   ["Named detection for 22+ major banks (US, UK, Canada, India) + generic parser for any other bank", true],
