@@ -81,7 +81,7 @@ export function HowItWorksTimeline() {
         <div className="relative mt-20">
           {/* Dashed connector line — hidden on mobile, animates width on reveal */}
           <div
-            className="pointer-events-none absolute left-0 right-0 top-[92px] hidden -translate-y-1/2 md:block"
+            className="pointer-events-none absolute left-0 right-0 top-[72px] hidden -translate-y-1/2 md:block"
             aria-hidden
           >
             <div className="relative mx-auto h-px w-[calc(100%-6rem)]">
