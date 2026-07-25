@@ -6,6 +6,7 @@ import { getConfidenceTier } from "./confidence";
 import { ocrPdfToTextItems, ocrImageToTextItems, looksLikeScannedPage } from "./ocr";
 import { findHeaderRow, headerLabelsInOrder } from "./detect-columns";
 import { detectBankFromHeaderSignature } from "./bank-header-signatures";
+import { parseIifText, iifResultToTransactions } from "../iif/parse-iif";
 import type { PageText } from "./extract-text";
 import type { ParsedStatement, Transaction } from "../statement-store";
 
@@ -17,6 +18,27 @@ export async function parseStatementFile(
   ocrLanguages: string[] = ["eng"]
 ): Promise<ParsedStatement> {
   const warnings: string[] = [];
+
+  if (/\.iif$/i.test(file.name)) {
+    // IIF is structured text, not a PDF/image -- a completely different,
+    // much simpler code path (no OCR, no layout inference, no page
+    // rendering), so it short-circuits here rather than flowing through
+    // the PDF/image logic below at all.
+    const content = await file.text();
+    const result = parseIifText(content);
+    const transactions = iifResultToTransactions(result, file.name);
+    onPageParsed?.(1, 1);
+    return {
+      fileName: file.name,
+      fileSizeBytes: file.size,
+      pageCount: 1,
+      detectedBank: null, // IIF exports don't typically name the issuing bank
+      currency: detectCurrency(content, null),
+      transactions,
+      warnings: result.warnings,
+    };
+  }
+
   const isImage = IMAGE_TYPES.includes(file.type) || /\.(jpe?g|png|webp)$/i.test(file.name);
 
   let extracted;

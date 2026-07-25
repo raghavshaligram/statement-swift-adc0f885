@@ -17,7 +17,7 @@ const FAQ: Array<{ q: string; a: string }> = [
   },
   {
     q: "Which banks and formats are supported?",
-    a: "Named detection for 20+ major banks across the US, UK, Canada, and India — including Chase, Bank of America, Citibank, Barclays, HSBC, RBC, ICICI, HDFC, and more — plus a generic layout parser for any other bank's text-based PDF statement. Export to Excel, CSV, Tally XML, OFX, QIF, or QBO.",
+    a: "Named detection for 20+ major banks across the US, UK, Canada, and India — including Chase, Bank of America, Citibank, Barclays, HSBC, RBC, ICICI, HDFC, and more — plus a generic layout parser for any other bank's text-based PDF statement. Export to Excel, CSV, Tally XML, OFX, QIF, QBO, or IIF.",
   },
   {
     q: "Does it work with scanned PDFs or photos?",
@@ -25,7 +25,7 @@ const FAQ: Array<{ q: string; a: string }> = [
   },
   {
     q: "Can I import into QuickBooks?",
-    a: "Yes — export to QBO or CSV and import directly into QuickBooks. Bank-specific import walkthroughs are on the way.",
+    a: "Yes — export to IIF for QuickBooks Desktop, or QBO for QuickBooks Online's Web Connect import. Bank-specific import walkthroughs are on the way.",
   },
   {
     q: "Can I convert statements from multiple accounts at once?",

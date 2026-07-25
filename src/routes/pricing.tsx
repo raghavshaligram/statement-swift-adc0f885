@@ -27,13 +27,13 @@ const FREE_ROWS: Array<[string, boolean]> = [
   ["Excel and CSV export", true],
   ["Named detection for 22+ major banks (US, UK, Canada, India) + generic parser for any other bank", true],
   ["100% on-device — nothing ever uploaded", true],
-  ["Tally XML, OFX, QIF, QBO export", false],
+  ["Tally XML, OFX, QIF, QBO, IIF export", false],
 ];
 
 const PRO_ROWS: string[] = [
   "Everything in Free",
   "Unlimited pages per statement",
-  "All 6 export formats (Excel, CSV, Tally XML, OFX, QIF, QBO)",
+  "All 7 export formats (Excel, CSV, Tally XML, OFX, QIF, QBO, IIF)",
 ];
 
 const COMPARISON_COLS: Array<{ key: string; label: string; highlight?: boolean }> = [
@@ -88,7 +88,7 @@ const COMPARISON_ROWS: Array<{ label: string; values: Record<string, string> }> 
   {
     label: "Export formats",
     values: {
-      ll: "6: Excel, CSV, Tally XML, OFX, QIF, QBO",
+      ll: "7: Excel, CSV, Tally XML, OFX, QIF, QBO, IIF",
       capy: "3: Excel, CSV, QBO",
       docu: "Excel, CSV, QBO, OFX, Xero",
       bsc: "Not confirmed",

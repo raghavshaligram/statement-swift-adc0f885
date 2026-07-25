@@ -112,5 +112,10 @@ export async function getPdfPageCount(file: File): Promise<number> {
  */
 export async function getStatementPageCount(file: File): Promise<number> {
   const isImage = file.type.startsWith("image/") || /\.(jpe?g|png|webp)$/i.test(file.name);
-  return isImage ? 1 : getPdfPageCount(file);
+  const isIif = /\.iif$/i.test(file.name);
+  // Neither images nor IIF files have a real "page" concept -- IIF is plain
+  // structured text (a list of transactions, not pages), so it counts as 1
+  // for the free-tier limit, same convention as a single image upload.
+  if (isImage || isIif) return 1;
+  return getPdfPageCount(file);
 }

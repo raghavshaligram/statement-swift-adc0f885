@@ -75,7 +75,7 @@ const FEATURES = [
   {
     icon: FileOutput,
     title: "Every Format",
-    body: "Excel (.xlsx), CSV, Tally XML, OFX, QIF, QBO — exports for whatever ledger you already use.",
+    body: "Excel (.xlsx), CSV, Tally XML, OFX, QIF, QBO, IIF — exports for whatever ledger you already use.",
   },
 ];
 

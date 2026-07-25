@@ -30,7 +30,7 @@ export function StatementDropzone({
         f.type === "image/jpeg" ||
         f.type === "image/png" ||
         f.type === "image/webp" ||
-        /\.(pdf|jpe?g|png|webp)$/i.test(f.name)
+        /\.(pdf|jpe?g|png|webp|iif)$/i.test(f.name)
     );
     if (files.length) onFiles(files);
   }
@@ -101,7 +101,7 @@ export function StatementDropzone({
         ref={inputRef}
         type="file"
         multiple={multiple}
-        accept="application/pdf,image/jpeg,image/png,image/webp"
+        accept="application/pdf,image/jpeg,image/png,image/webp,.iif"
         className="hidden"
         onChange={(e) => e.target.files && handleFiles(e.target.files)}
       />

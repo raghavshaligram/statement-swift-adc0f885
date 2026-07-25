@@ -5,10 +5,11 @@ import { exportToTallyXml } from "./to-tally-xml";
 import { exportToOfx } from "./to-ofx";
 import { exportToQif } from "./to-qif";
 import { exportToQbo } from "./to-qbo";
+import { exportToIif } from "./to-iif";
 import { DEFAULT_EXPORT_OPTIONS, type ExportOptions } from "./types";
 import { getConfidenceTier } from "../pdf/confidence";
 
-export type ExportFormat = "xlsx" | "csv" | "tally" | "ofx" | "qif" | "qbo";
+export type ExportFormat = "xlsx" | "csv" | "tally" | "ofx" | "qif" | "qbo" | "iif";
 
 export const FORMAT_EXTENSIONS: Record<ExportFormat, string> = {
   xlsx: ".xlsx",
@@ -17,6 +18,7 @@ export const FORMAT_EXTENSIONS: Record<ExportFormat, string> = {
   ofx: ".ofx",
   qif: ".qif",
   qbo: ".qbo",
+  iif: ".iif",
 };
 
 export function runExport(
@@ -47,6 +49,8 @@ export function runExport(
       return exportToQif(included, fileName);
     case "qbo":
       return exportToQbo(included, fileName);
+    case "iif":
+      return exportToIif(included, fileName);
   }
 }
 

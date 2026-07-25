@@ -29,6 +29,7 @@ const FORMATS: Array<{
   { key: "ofx", name: "OFX",   ext: ".ofx",  icon: FileType,        desc: "Open Financial Exchange — Quicken, Money.",           tone: "slate", pro: true },
   { key: "qif", name: "QIF",   ext: ".qif",  icon: FileType,        desc: "Legacy Quicken import format.",                       tone: "slate", pro: true },
   { key: "qbo", name: "QBO",   ext: ".qbo",  icon: FileType,        desc: "QuickBooks Web Connect — imports as a bank feed.",    tone: "slate", pro: true },
+  { key: "iif", name: "IIF",   ext: ".iif",  icon: FileType,        desc: "QuickBooks Desktop import format.",                   tone: "slate", pro: true },
 ];
 
 function ExportPage() {
