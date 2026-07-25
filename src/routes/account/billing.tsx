@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
 import { Check, Minus, Zap, CreditCard } from "lucide-react";
 import { AccountShell } from "@/components/account-shell";
-import { cn } from "@/lib/utils";
+import { useImageUsage } from "@/hooks/use-image-usage";
+import { SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
 
 export const Route = createFileRoute("/account/billing")({
   head: () => ({
@@ -16,10 +16,11 @@ export const Route = createFileRoute("/account/billing")({
 });
 
 const FEATURES = [
-  { label: "Pages per month", free: "30 pages", pro: "Unlimited" },
+  { label: "Pages per PDF statement", free: `${SIGNED_IN_MAX_PAGES} pages`, pro: "Unlimited" },
+  { label: "Photo/scan conversions", free: `${SIGNED_IN_MAX_PAGES} lifetime`, pro: "Unlimited" },
   { label: "Excel (.xlsx) export", free: true, pro: true },
   { label: "CSV export", free: true, pro: true },
-  { label: "OFX / QIF / QBO", free: false, pro: true },
+  { label: "OFX / QIF / QBO / IIF", free: false, pro: true },
   { label: "Tally XML export", free: false, pro: true },
   { label: "Side-by-side review", free: true, pro: true },
   { label: "Conversion history", free: true, pro: true },
@@ -36,12 +37,14 @@ function Cell({ v }: { v: string | boolean }) {
 }
 
 function BillingPage() {
-  const [cycle, setCycle] = useState<"monthly" | "annual">("monthly");
-  const used = 18;
-  const cap = 30;
+  const imageUsage = useImageUsage(0);
+  const used = imageUsage.used ?? 0;
+  const cap = imageUsage.limit;
   const pct = Math.min(100, (used / cap) * 100);
-  const monthlyPrice = 9.99;
-  const price = cycle === "monthly" ? monthlyPrice : (monthlyPrice * 12 * 0.8) / 12;
+  // Pro price is not yet decided anywhere in this project -- deliberately
+  // NOT inventing a number here (that's exactly the kind of fake data this
+  // page is being fixed to remove). Placeholder until a real price exists.
+  const monthlyPrice: number | null = null;
 
   return (
     <AccountShell
@@ -68,17 +71,17 @@ function BillingPage() {
 
         <div className="rounded-2xl border border-border bg-background p-6 shadow-sm">
           <div className="font-mono text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            Usage this month
+            Photo/scan usage (lifetime)
           </div>
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-3xl font-bold tracking-tight text-ink">{used}</span>
-            <span className="font-mono text-sm text-muted-foreground">/ {cap} pages</span>
+            <span className="font-mono text-sm text-muted-foreground">/ {cap} images</span>
           </div>
           <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-surface-muted">
             <div className="h-full rounded-full bg-emerald" style={{ width: `${pct}%` }} />
           </div>
           <div className="mt-2 text-xs text-muted-foreground">
-            {cap - used} pages remaining · resets Dec 1
+            {Math.max(0, cap - used)} conversions remaining · doesn't reset, ever, on Free — PDF statements aren't counted here at all (unlimited on Free, up to {SIGNED_IN_MAX_PAGES} pages each)
           </div>
         </div>
       </div>
@@ -92,40 +95,17 @@ function BillingPage() {
               Unlimited pages, all export formats, priority support.
             </p>
           </div>
-          <div className="flex rounded-lg bg-surface-muted p-1">
-            <button
-              onClick={() => setCycle("monthly")}
-              className={cn(
-                "rounded-md px-3 py-1.5 text-xs font-semibold transition",
-                cycle === "monthly" ? "bg-background text-ink shadow-sm" : "text-muted-foreground",
-              )}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setCycle("annual")}
-              className={cn(
-                "rounded-md px-3 py-1.5 text-xs font-semibold transition",
-                cycle === "annual" ? "bg-background text-ink shadow-sm" : "text-muted-foreground",
-              )}
-            >
-              Annual −20%
-            </button>
-          </div>
         </div>
 
-        <div className="mt-5 flex items-baseline gap-1.5">
-          <span className="font-mono text-4xl font-bold tracking-tight text-ink">${price.toFixed(2)}</span>
-          <span className="font-mono text-sm text-muted-foreground">/ month</span>
-          {cycle === "annual" ? (
-            <span className="ml-2 rounded-full bg-emerald/10 px-2 py-0.5 text-xs font-semibold text-emerald">
-              billed annually
-            </span>
-          ) : null}
+        <div className="mt-5">
+          <span className="font-mono text-lg font-semibold text-ink">Pricing coming soon</span>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Pro checkout isn't live yet — leave your email and we'll notify you the moment it is.
+          </p>
         </div>
 
         <button className="mt-5 inline-flex h-11 items-center gap-2 rounded-lg bg-emerald px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-emerald/90">
-          <Zap className="h-4 w-4" /> Upgrade now
+          <Zap className="h-4 w-4" /> Notify me when Pro launches
         </button>
       </div>
 
