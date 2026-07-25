@@ -74,21 +74,14 @@ export function AuthActions({ variant = "dark" }: { variant?: Variant }) {
         <DropdownMenuSeparator className="my-0 bg-white/10" />
         <DropdownMenuItem
           onClick={async () => {
-            // Navigate FIRST, before awaiting signOut() -- not after.
-            // Real race condition found: Supabase's auth-state listener
-            // can update `user` to null while signOut() is still
-            // in-flight, before this handler's own navigate() call ever
-            // runs. If the user was on /upload, that page (still the
-            // active route at that moment) re-renders in its signed-out
-            // state and is visible for a moment before the navigate()
-            // call finally redirects -- the "flash of the upload screen"
-            // reported directly. Navigating immediately, then signing
-            // out in the background, means the user has already left
-            // the current page before any auth-state re-render can be
-            // seen there.
+            // Sign out FIRST, then navigate. Navigating to "/" while still
+            // authenticated causes the landing page's own effect to bounce
+            // signed-in users straight back to /upload -- reported as
+            // "sign out sends me to /upload". Flipping auth state before
+            // routing avoids that redirect.
             resetStatements();
-            navigate({ to: "/" });
             await signOut();
+            navigate({ to: "/", replace: true });
           }}
           className="cursor-pointer gap-3 rounded-none px-4 py-3 text-sm font-semibold text-rose-400 focus:bg-rose-500/10 focus:text-rose-300"
         >
