@@ -1,0 +1,47 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { FormatConverterPage } from "@/components/format-converter-page";
+
+const FAQ = [
+  {
+    q: "Where do I get an OFX file to convert?",
+    a: "OFX (Open Financial Exchange) is a standard export format many banks and finance tools support directly from online banking, or from software like Quicken or QuickBooks.",
+  },
+  {
+    q: "Does this also work with QFX files?",
+    a: "Yes — QFX is the same underlying format with Quicken-specific headers, and the same reader handles both.",
+  },
+  {
+    q: "What information does it extract?",
+    a: "Date, description, amount, transaction ID, and transaction type from each record. Handles both real-world OFX styles (older SGML-style files and newer XML-style files with closing tags).",
+  },
+  {
+    q: "Does this cost anything?",
+    a: "No. Structured file conversions like this are free and unlimited — there's no OCR involved, so there's no reason to gate it the way PDF/photo conversion is.",
+  },
+];
+
+export const Route = createFileRoute("/ofx-to-csv")({
+  head: () => ({
+    meta: [
+      { title: "OFX to CSV Converter — Free, On-Device — LedgerLocal" },
+      {
+        name: "description",
+        content: "Convert an OFX (or QFX) file to CSV. Free, unlimited, nothing uploaded — runs entirely in your browser.",
+      },
+    ],
+  }),
+  component: () => (
+    <FormatConverterPage
+      title="OFX to CSV Converter"
+      intro="Convert an OFX (or QFX) file to a clean CSV — free, unlimited, and entirely on your device."
+      freeNote="Free and unlimited — no OCR involved, no page limits"
+      steps={[
+        "Drop your .ofx or .qfx file.",
+        "LedgerLocal reads each transaction record directly from the file's own structure.",
+        "Export a clean CSV file, ready for a spreadsheet or any other tool.",
+      ]}
+      ctaLabel="Convert an OFX file to CSV"
+      faq={FAQ}
+    />
+  ),
+});

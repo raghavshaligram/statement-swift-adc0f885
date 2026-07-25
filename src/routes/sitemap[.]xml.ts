@@ -25,6 +25,14 @@ const entries = [
   { path: "/chase-bank-statement-to-excel", changefreq: "monthly", priority: "0.6" },
   { path: "/icici-bank-statement-to-excel", changefreq: "monthly", priority: "0.6" },
   { path: "/natwest-bank-statement-to-csv", changefreq: "monthly", priority: "0.6" },
+  { path: "/csv-to-iif", changefreq: "monthly", priority: "0.6" },
+  { path: "/iif-to-csv", changefreq: "monthly", priority: "0.6" },
+  { path: "/csv-to-qif", changefreq: "monthly", priority: "0.6" },
+  { path: "/qif-to-csv", changefreq: "monthly", priority: "0.6" },
+  { path: "/csv-to-ofx", changefreq: "monthly", priority: "0.6" },
+  { path: "/ofx-to-csv", changefreq: "monthly", priority: "0.6" },
+  { path: "/qfx-to-csv", changefreq: "monthly", priority: "0.6" },
+  { path: "/mt940-to-csv", changefreq: "monthly", priority: "0.5" },
 ];
 
 export const Route = createFileRoute("/sitemap.xml")({

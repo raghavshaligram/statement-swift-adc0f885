@@ -14,13 +14,21 @@ import { Route as BankStatementToOfxRouteImport } from './routes/bank-statement-
 import { Route as BankStatementToQifRouteImport } from './routes/bank-statement-to-qif'
 import { Route as BankStatementToTallyRouteImport } from './routes/bank-statement-to-tally'
 import { Route as ChaseBankStatementToExcelRouteImport } from './routes/chase-bank-statement-to-excel'
+import { Route as CsvToIifRouteImport } from './routes/csv-to-iif'
+import { Route as CsvToOfxRouteImport } from './routes/csv-to-ofx'
+import { Route as CsvToQifRouteImport } from './routes/csv-to-qif'
 import { Route as ExportRouteImport } from './routes/export'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as IciciBankStatementToExcelRouteImport } from './routes/icici-bank-statement-to-excel'
+import { Route as IifToCsvRouteImport } from './routes/iif-to-csv'
+import { Route as Mt940ToCsvRouteImport } from './routes/mt940-to-csv'
 import { Route as NatwestBankStatementToCsvRouteImport } from './routes/natwest-bank-statement-to-csv'
+import { Route as OfxToCsvRouteImport } from './routes/ofx-to-csv'
 import { Route as PreviewRouteImport } from './routes/preview'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as QfxToCsvRouteImport } from './routes/qfx-to-csv'
+import { Route as QifToCsvRouteImport } from './routes/qif-to-csv'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as SignupRouteImport } from './routes/signup'
@@ -58,6 +66,21 @@ const ChaseBankStatementToExcelRoute =
     path: '/chase-bank-statement-to-excel',
     getParentRoute: () => rootRouteImport,
   } as any)
+const CsvToIifRoute = CsvToIifRouteImport.update({
+  id: '/csv-to-iif',
+  path: '/csv-to-iif',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CsvToOfxRoute = CsvToOfxRouteImport.update({
+  id: '/csv-to-ofx',
+  path: '/csv-to-ofx',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CsvToQifRoute = CsvToQifRouteImport.update({
+  id: '/csv-to-qif',
+  path: '/csv-to-qif',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExportRoute = ExportRouteImport.update({
   id: '/export',
   path: '/export',
@@ -74,12 +97,27 @@ const IciciBankStatementToExcelRoute =
     path: '/icici-bank-statement-to-excel',
     getParentRoute: () => rootRouteImport,
   } as any)
+const IifToCsvRoute = IifToCsvRouteImport.update({
+  id: '/iif-to-csv',
+  path: '/iif-to-csv',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Mt940ToCsvRoute = Mt940ToCsvRouteImport.update({
+  id: '/mt940-to-csv',
+  path: '/mt940-to-csv',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NatwestBankStatementToCsvRoute =
   NatwestBankStatementToCsvRouteImport.update({
     id: '/natwest-bank-statement-to-csv',
     path: '/natwest-bank-statement-to-csv',
     getParentRoute: () => rootRouteImport,
   } as any)
+const OfxToCsvRoute = OfxToCsvRouteImport.update({
+  id: '/ofx-to-csv',
+  path: '/ofx-to-csv',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PreviewRoute = PreviewRouteImport.update({
   id: '/preview',
   path: '/preview',
@@ -93,6 +131,16 @@ const PricingRoute = PricingRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QfxToCsvRoute = QfxToCsvRouteImport.update({
+  id: '/qfx-to-csv',
+  path: '/qfx-to-csv',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QifToCsvRoute = QifToCsvRouteImport.update({
+  id: '/qif-to-csv',
+  path: '/qif-to-csv',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -152,13 +200,21 @@ export interface FileRoutesByFullPath {
   '/bank-statement-to-qif': typeof BankStatementToQifRoute
   '/bank-statement-to-tally': typeof BankStatementToTallyRoute
   '/chase-bank-statement-to-excel': typeof ChaseBankStatementToExcelRoute
+  '/csv-to-iif': typeof CsvToIifRoute
+  '/csv-to-ofx': typeof CsvToOfxRoute
+  '/csv-to-qif': typeof CsvToQifRoute
   '/export': typeof ExportRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
+  '/iif-to-csv': typeof IifToCsvRoute
+  '/mt940-to-csv': typeof Mt940ToCsvRoute
   '/natwest-bank-statement-to-csv': typeof NatwestBankStatementToCsvRoute
+  '/ofx-to-csv': typeof OfxToCsvRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/qfx-to-csv': typeof QfxToCsvRoute
+  '/qif-to-csv': typeof QifToCsvRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
@@ -176,13 +232,21 @@ export interface FileRoutesByTo {
   '/bank-statement-to-qif': typeof BankStatementToQifRoute
   '/bank-statement-to-tally': typeof BankStatementToTallyRoute
   '/chase-bank-statement-to-excel': typeof ChaseBankStatementToExcelRoute
+  '/csv-to-iif': typeof CsvToIifRoute
+  '/csv-to-ofx': typeof CsvToOfxRoute
+  '/csv-to-qif': typeof CsvToQifRoute
   '/export': typeof ExportRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
+  '/iif-to-csv': typeof IifToCsvRoute
+  '/mt940-to-csv': typeof Mt940ToCsvRoute
   '/natwest-bank-statement-to-csv': typeof NatwestBankStatementToCsvRoute
+  '/ofx-to-csv': typeof OfxToCsvRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/qfx-to-csv': typeof QfxToCsvRoute
+  '/qif-to-csv': typeof QifToCsvRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
@@ -201,13 +265,21 @@ export interface FileRoutesById {
   '/bank-statement-to-qif': typeof BankStatementToQifRoute
   '/bank-statement-to-tally': typeof BankStatementToTallyRoute
   '/chase-bank-statement-to-excel': typeof ChaseBankStatementToExcelRoute
+  '/csv-to-iif': typeof CsvToIifRoute
+  '/csv-to-ofx': typeof CsvToOfxRoute
+  '/csv-to-qif': typeof CsvToQifRoute
   '/export': typeof ExportRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
+  '/iif-to-csv': typeof IifToCsvRoute
+  '/mt940-to-csv': typeof Mt940ToCsvRoute
   '/natwest-bank-statement-to-csv': typeof NatwestBankStatementToCsvRoute
+  '/ofx-to-csv': typeof OfxToCsvRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/qfx-to-csv': typeof QfxToCsvRoute
+  '/qif-to-csv': typeof QifToCsvRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
@@ -227,13 +299,21 @@ export interface FileRouteTypes {
     | '/bank-statement-to-qif'
     | '/bank-statement-to-tally'
     | '/chase-bank-statement-to-excel'
+    | '/csv-to-iif'
+    | '/csv-to-ofx'
+    | '/csv-to-qif'
     | '/export'
     | '/forgot-password'
     | '/icici-bank-statement-to-excel'
+    | '/iif-to-csv'
+    | '/mt940-to-csv'
     | '/natwest-bank-statement-to-csv'
+    | '/ofx-to-csv'
     | '/preview'
     | '/pricing'
     | '/privacy'
+    | '/qfx-to-csv'
+    | '/qif-to-csv'
     | '/reset-password'
     | '/signin'
     | '/signup'
@@ -251,13 +331,21 @@ export interface FileRouteTypes {
     | '/bank-statement-to-qif'
     | '/bank-statement-to-tally'
     | '/chase-bank-statement-to-excel'
+    | '/csv-to-iif'
+    | '/csv-to-ofx'
+    | '/csv-to-qif'
     | '/export'
     | '/forgot-password'
     | '/icici-bank-statement-to-excel'
+    | '/iif-to-csv'
+    | '/mt940-to-csv'
     | '/natwest-bank-statement-to-csv'
+    | '/ofx-to-csv'
     | '/preview'
     | '/pricing'
     | '/privacy'
+    | '/qfx-to-csv'
+    | '/qif-to-csv'
     | '/reset-password'
     | '/signin'
     | '/signup'
@@ -275,13 +363,21 @@ export interface FileRouteTypes {
     | '/bank-statement-to-qif'
     | '/bank-statement-to-tally'
     | '/chase-bank-statement-to-excel'
+    | '/csv-to-iif'
+    | '/csv-to-ofx'
+    | '/csv-to-qif'
     | '/export'
     | '/forgot-password'
     | '/icici-bank-statement-to-excel'
+    | '/iif-to-csv'
+    | '/mt940-to-csv'
     | '/natwest-bank-statement-to-csv'
+    | '/ofx-to-csv'
     | '/preview'
     | '/pricing'
     | '/privacy'
+    | '/qfx-to-csv'
+    | '/qif-to-csv'
     | '/reset-password'
     | '/signin'
     | '/signup'
@@ -300,13 +396,21 @@ export interface RootRouteChildren {
   BankStatementToQifRoute: typeof BankStatementToQifRoute
   BankStatementToTallyRoute: typeof BankStatementToTallyRoute
   ChaseBankStatementToExcelRoute: typeof ChaseBankStatementToExcelRoute
+  CsvToIifRoute: typeof CsvToIifRoute
+  CsvToOfxRoute: typeof CsvToOfxRoute
+  CsvToQifRoute: typeof CsvToQifRoute
   ExportRoute: typeof ExportRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   IciciBankStatementToExcelRoute: typeof IciciBankStatementToExcelRoute
+  IifToCsvRoute: typeof IifToCsvRoute
+  Mt940ToCsvRoute: typeof Mt940ToCsvRoute
   NatwestBankStatementToCsvRoute: typeof NatwestBankStatementToCsvRoute
+  OfxToCsvRoute: typeof OfxToCsvRoute
   PreviewRoute: typeof PreviewRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
+  QfxToCsvRoute: typeof QfxToCsvRoute
+  QifToCsvRoute: typeof QifToCsvRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
@@ -356,6 +460,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChaseBankStatementToExcelRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/csv-to-iif': {
+      id: '/csv-to-iif'
+      path: '/csv-to-iif'
+      fullPath: '/csv-to-iif'
+      preLoaderRoute: typeof CsvToIifRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/csv-to-ofx': {
+      id: '/csv-to-ofx'
+      path: '/csv-to-ofx'
+      fullPath: '/csv-to-ofx'
+      preLoaderRoute: typeof CsvToOfxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/csv-to-qif': {
+      id: '/csv-to-qif'
+      path: '/csv-to-qif'
+      fullPath: '/csv-to-qif'
+      preLoaderRoute: typeof CsvToQifRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/export': {
       id: '/export'
       path: '/export'
@@ -377,11 +502,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IciciBankStatementToExcelRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/iif-to-csv': {
+      id: '/iif-to-csv'
+      path: '/iif-to-csv'
+      fullPath: '/iif-to-csv'
+      preLoaderRoute: typeof IifToCsvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mt940-to-csv': {
+      id: '/mt940-to-csv'
+      path: '/mt940-to-csv'
+      fullPath: '/mt940-to-csv'
+      preLoaderRoute: typeof Mt940ToCsvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/natwest-bank-statement-to-csv': {
       id: '/natwest-bank-statement-to-csv'
       path: '/natwest-bank-statement-to-csv'
       fullPath: '/natwest-bank-statement-to-csv'
       preLoaderRoute: typeof NatwestBankStatementToCsvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ofx-to-csv': {
+      id: '/ofx-to-csv'
+      path: '/ofx-to-csv'
+      fullPath: '/ofx-to-csv'
+      preLoaderRoute: typeof OfxToCsvRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/preview': {
@@ -403,6 +549,20 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qfx-to-csv': {
+      id: '/qfx-to-csv'
+      path: '/qfx-to-csv'
+      fullPath: '/qfx-to-csv'
+      preLoaderRoute: typeof QfxToCsvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qif-to-csv': {
+      id: '/qif-to-csv'
+      path: '/qif-to-csv'
+      fullPath: '/qif-to-csv'
+      preLoaderRoute: typeof QifToCsvRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -484,13 +644,21 @@ const rootRouteChildren: RootRouteChildren = {
   BankStatementToQifRoute: BankStatementToQifRoute,
   BankStatementToTallyRoute: BankStatementToTallyRoute,
   ChaseBankStatementToExcelRoute: ChaseBankStatementToExcelRoute,
+  CsvToIifRoute: CsvToIifRoute,
+  CsvToOfxRoute: CsvToOfxRoute,
+  CsvToQifRoute: CsvToQifRoute,
   ExportRoute: ExportRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   IciciBankStatementToExcelRoute: IciciBankStatementToExcelRoute,
+  IifToCsvRoute: IifToCsvRoute,
+  Mt940ToCsvRoute: Mt940ToCsvRoute,
   NatwestBankStatementToCsvRoute: NatwestBankStatementToCsvRoute,
+  OfxToCsvRoute: OfxToCsvRoute,
   PreviewRoute: PreviewRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
+  QfxToCsvRoute: QfxToCsvRoute,
+  QifToCsvRoute: QifToCsvRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,

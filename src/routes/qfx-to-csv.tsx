@@ -1,0 +1,47 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { FormatConverterPage } from "@/components/format-converter-page";
+
+const FAQ = [
+  {
+    q: "Where do I get a QFX file to convert?",
+    a: "QFX is Quicken's own export format — you'd have one from Quicken, or from a bank's \"Download for Quicken\" export option.",
+  },
+  {
+    q: "Is QFX different from OFX?",
+    a: "QFX is the same underlying Open Financial Exchange format with Quicken-specific headers — LedgerLocal reads both with the same parser.",
+  },
+  {
+    q: "What information does it extract?",
+    a: "Date, description, amount, transaction ID, and transaction type from each record.",
+  },
+  {
+    q: "Does this cost anything?",
+    a: "No. Structured file conversions like this are free and unlimited — there's no OCR involved, so there's no reason to gate it the way PDF/photo conversion is.",
+  },
+];
+
+export const Route = createFileRoute("/qfx-to-csv")({
+  head: () => ({
+    meta: [
+      { title: "QFX to CSV Converter — Free, On-Device — LedgerLocal" },
+      {
+        name: "description",
+        content: "Convert a QFX (Quicken) file to CSV. Free, unlimited, nothing uploaded — runs entirely in your browser.",
+      },
+    ],
+  }),
+  component: () => (
+    <FormatConverterPage
+      title="QFX to CSV Converter"
+      intro="Convert a QFX (Quicken) file to a clean CSV — free, unlimited, and entirely on your device."
+      freeNote="Free and unlimited — no OCR involved, no page limits"
+      steps={[
+        "Drop your .qfx file.",
+        "LedgerLocal reads each transaction record directly from the file's own structure.",
+        "Export a clean CSV file, ready for a spreadsheet or any other tool.",
+      ]}
+      ctaLabel="Convert a QFX file to CSV"
+      faq={FAQ}
+    />
+  ),
+});
