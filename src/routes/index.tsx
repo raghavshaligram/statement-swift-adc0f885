@@ -26,6 +26,7 @@ import { BANK_LABELS } from "@/lib/pdf/bank-detection";
 import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
 import { validateUploadBatch } from "@/lib/pdf/upload-validation";
+import { useImageUsage } from "@/hooks/use-image-usage";
 import { ANONYMOUS_MAX_PAGES, SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
@@ -427,6 +428,8 @@ function HeroUploadCard() {
   const failProcessing = useStatementStore((s) => s.failProcessing);
   const [, setLiveFileName] = useState("");
   const [pageLimitError, setPageLimitError] = useState<string | null>(null);
+  const [usageRefresh, setUsageRefresh] = useState(0);
+  const imageUsage = useImageUsage(usageRefresh);
 
   async function handleFiles(files: File[]) {
     setPageLimitError(null);
@@ -450,6 +453,7 @@ function HeroUploadCard() {
         parsed.push(statement);
       }
       finishProcessing(parsed);
+      setUsageRefresh((n) => n + 1);
     } catch (err) {
       failProcessing(err instanceof Error ? err.message : "Something went wrong while parsing.");
     }
@@ -507,6 +511,19 @@ function HeroUploadCard() {
               </Link>
             </div>
           ) : null}
+          {imageUsage.isSignedIn && imageUsage.used !== null && (
+            <p className="mt-2 px-2 text-center text-xs text-muted-foreground">
+              {imageUsage.used} of {imageUsage.limit} free photo/scan conversions used (lifetime)
+              {imageUsage.used >= imageUsage.limit && (
+                <>
+                  {" — "}
+                  <Link to="/account/billing" className="font-semibold text-emerald underline hover:no-underline">
+                    upgrade to Pro
+                  </Link>
+                </>
+              )}
+            </p>
+          )}
         </>
       )}
     </div>
