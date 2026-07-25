@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
+import { useStatementStore } from "@/lib/statement-store";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,7 @@ type Variant = "dark" | "light";
 export function AuthActions({ variant = "dark" }: { variant?: Variant }) {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const resetStatements = useStatementStore((s) => s.reset);
 
   if (loading) {
     return <div className="h-8 w-24 animate-pulse rounded-md bg-white/5" aria-hidden />;
@@ -72,6 +74,16 @@ export function AuthActions({ variant = "dark" }: { variant?: Variant }) {
         <DropdownMenuSeparator className="my-0 bg-white/10" />
         <DropdownMenuItem
           onClick={async () => {
+            // Reset directly here, not via a reactive effect elsewhere --
+            // signOut() navigates to "/" right after, which mounts
+            // HeroUploadCard FRESH if the user was on a different page
+            // (e.g. /upload). A fresh mount's own transition-detection
+            // state starts at "not previously signed in", so it never
+            // sees the sign-in -> sign-out transition to react to -- the
+            // real cause of the stale "ready to review" card persisting
+            // after logout. Resetting imperatively, tied directly to the
+            // actual click, sidesteps that entirely.
+            resetStatements();
             await signOut();
             navigate({ to: "/" });
           }}
