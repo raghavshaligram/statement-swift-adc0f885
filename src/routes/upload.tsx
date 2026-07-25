@@ -47,7 +47,7 @@ function UploadPage() {
         f.type === "image/jpeg" ||
         f.type === "image/png" ||
         f.type === "image/webp" ||
-        /\.(pdf|jpe?g|png|webp|iif|csv)$/i.test(f.name)
+        /\.(pdf|jpe?g|png|webp|iif|csv|ofx|qfx|qif|sta|mt940|940)$/i.test(f.name)
     );
     if (!arr.length) return;
     setPageLimitError(null);

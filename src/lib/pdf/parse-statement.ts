@@ -8,6 +8,9 @@ import { findHeaderRow, headerLabelsInOrder } from "./detect-columns";
 import { detectBankFromHeaderSignature } from "./bank-header-signatures";
 import { parseIifText, iifResultToTransactions } from "../iif/parse-iif";
 import { parseCsvText } from "../csv/parse-csv";
+import { parseOfxText, ofxResultToTransactions } from "../ofx/parse-ofx";
+import { parseQifText, qifResultToTransactions } from "../qif/parse-qif";
+import { parseMt940Text, mt940ResultToTransactions } from "../mt940/parse-mt940";
 import type { PageText } from "./extract-text";
 import type { ParsedStatement, Transaction } from "../statement-store";
 
@@ -35,6 +38,57 @@ export async function parseStatementFile(
       pageCount: 1,
       detectedBank: null, // IIF exports don't typically name the issuing bank
       currency: detectCurrency(content, null),
+      transactions,
+      warnings: result.warnings,
+    };
+  }
+
+  if (/\.(ofx|qfx)$/i.test(file.name)) {
+    // Same short-circuit pattern as IIF -- OFX/QFX are the same underlying
+    // format (QFX just adds Quicken-specific headers), one parser handles
+    // both.
+    const content = await file.text();
+    const result = parseOfxText(content);
+    const transactions = ofxResultToTransactions(result, file.name);
+    onPageParsed?.(1, 1);
+    return {
+      fileName: file.name,
+      fileSizeBytes: file.size,
+      pageCount: 1,
+      detectedBank: null,
+      currency: result.currency ?? detectCurrency(content, null),
+      transactions,
+      warnings: result.warnings,
+    };
+  }
+
+  if (/\.qif$/i.test(file.name)) {
+    const content = await file.text();
+    const result = parseQifText(content);
+    const transactions = qifResultToTransactions(result, file.name);
+    onPageParsed?.(1, 1);
+    return {
+      fileName: file.name,
+      fileSizeBytes: file.size,
+      pageCount: 1,
+      detectedBank: null,
+      currency: detectCurrency(content, null), // QIF has no explicit currency field
+      transactions,
+      warnings: result.warnings,
+    };
+  }
+
+  if (/\.(sta|mt940|940)$/i.test(file.name)) {
+    const content = await file.text();
+    const result = parseMt940Text(content);
+    const transactions = mt940ResultToTransactions(result, file.name);
+    onPageParsed?.(1, 1);
+    return {
+      fileName: file.name,
+      fileSizeBytes: file.size,
+      pageCount: 1,
+      detectedBank: null,
+      currency: result.currency ?? detectCurrency(content, null),
       transactions,
       warnings: result.warnings,
     };
