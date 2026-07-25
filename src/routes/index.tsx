@@ -427,7 +427,7 @@ function HeroUploadCard() {
   const finishProcessing = useStatementStore((s) => s.finishProcessing);
   const failProcessing = useStatementStore((s) => s.failProcessing);
   const [, setLiveFileName] = useState("");
-  const [pageLimitError, setPageLimitError] = useState<string | null>(null);
+  const [pageLimitError, setPageLimitError] = useState<{ message: string; requiresSignIn: boolean } | null>(null);
   const [usageRefresh, setUsageRefresh] = useState(0);
   const pageUsage = usePageUsage(usageRefresh);
 
@@ -436,7 +436,7 @@ function HeroUploadCard() {
 
     const validation = await validateUploadBatch(files, !!user);
     if (!validation.ok) {
-      setPageLimitError(validation.message);
+      setPageLimitError({ message: validation.message, requiresSignIn: validation.requiresSignIn });
       return;
     }
 
@@ -498,9 +498,11 @@ function HeroUploadCard() {
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
                 <div>
                   <div className="text-sm font-semibold text-amber-900">
-                    Your current plan supports up to {maxPages} pages
+                    {pageLimitError.requiresSignIn
+                      ? "Sign in required for photos and scans"
+                      : `Your current plan supports up to ${maxPages} pages`}
                   </div>
-                  <div className="text-xs text-amber-800">{pageLimitError}</div>
+                  <div className="text-xs text-amber-800">{pageLimitError.message}</div>
                 </div>
               </div>
               <Link

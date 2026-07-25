@@ -28,7 +28,7 @@ function UploadPage() {
   const nav = useNavigate();
   const { user } = useAuth();
   const maxPages = user ? SIGNED_IN_MAX_PAGES : ANONYMOUS_MAX_PAGES;
-  const [pageLimitError, setPageLimitError] = useState<string | null>(null);
+  const [pageLimitError, setPageLimitError] = useState<{ message: string; requiresSignIn: boolean } | null>(null);
   const [ocrLanguage, setOcrLanguage] = useState<string>("eng");
   const [usageRefresh, setUsageRefresh] = useState(0);
   const pageUsage = usePageUsage(usageRefresh);
@@ -57,7 +57,7 @@ function UploadPage() {
 
     const validation = await validateUploadBatch(arr, !!user);
     if (!validation.ok) {
-      setPageLimitError(validation.message);
+      setPageLimitError({ message: validation.message, requiresSignIn: validation.requiresSignIn });
       return;
     }
 
@@ -129,9 +129,11 @@ function UploadPage() {
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
               <div>
                 <div className="font-semibold text-amber-900">
-                  Your current plan supports up to {maxPages} pages
+                  {pageLimitError.requiresSignIn
+                    ? "Sign in required for photos and scans"
+                    : `Your current plan supports up to ${maxPages} pages`}
                 </div>
-                <div className="text-sm text-amber-800">{pageLimitError}</div>
+                <div className="text-sm text-amber-800">{pageLimitError.message}</div>
               </div>
             </div>
             <Link
