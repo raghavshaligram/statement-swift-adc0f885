@@ -17,6 +17,7 @@ import { Route as ChaseBankStatementToExcelRouteImport } from './routes/chase-ba
 import { Route as ExportRouteImport } from './routes/export'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as IciciBankStatementToExcelRouteImport } from './routes/icici-bank-statement-to-excel'
+import { Route as NatwestBankStatementToCsvRouteImport } from './routes/natwest-bank-statement-to-csv'
 import { Route as PreviewRouteImport } from './routes/preview'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -71,6 +72,12 @@ const IciciBankStatementToExcelRoute =
   IciciBankStatementToExcelRouteImport.update({
     id: '/icici-bank-statement-to-excel',
     path: '/icici-bank-statement-to-excel',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const NatwestBankStatementToCsvRoute =
+  NatwestBankStatementToCsvRouteImport.update({
+    id: '/natwest-bank-statement-to-csv',
+    path: '/natwest-bank-statement-to-csv',
     getParentRoute: () => rootRouteImport,
   } as any)
 const PreviewRoute = PreviewRouteImport.update({
@@ -148,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/export': typeof ExportRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
+  '/natwest-bank-statement-to-csv': typeof NatwestBankStatementToCsvRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -171,6 +179,7 @@ export interface FileRoutesByTo {
   '/export': typeof ExportRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
+  '/natwest-bank-statement-to-csv': typeof NatwestBankStatementToCsvRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -195,6 +204,7 @@ export interface FileRoutesById {
   '/export': typeof ExportRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/icici-bank-statement-to-excel': typeof IciciBankStatementToExcelRoute
+  '/natwest-bank-statement-to-csv': typeof NatwestBankStatementToCsvRoute
   '/preview': typeof PreviewRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -220,6 +230,7 @@ export interface FileRouteTypes {
     | '/export'
     | '/forgot-password'
     | '/icici-bank-statement-to-excel'
+    | '/natwest-bank-statement-to-csv'
     | '/preview'
     | '/pricing'
     | '/privacy'
@@ -243,6 +254,7 @@ export interface FileRouteTypes {
     | '/export'
     | '/forgot-password'
     | '/icici-bank-statement-to-excel'
+    | '/natwest-bank-statement-to-csv'
     | '/preview'
     | '/pricing'
     | '/privacy'
@@ -266,6 +278,7 @@ export interface FileRouteTypes {
     | '/export'
     | '/forgot-password'
     | '/icici-bank-statement-to-excel'
+    | '/natwest-bank-statement-to-csv'
     | '/preview'
     | '/pricing'
     | '/privacy'
@@ -290,6 +303,7 @@ export interface RootRouteChildren {
   ExportRoute: typeof ExportRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   IciciBankStatementToExcelRoute: typeof IciciBankStatementToExcelRoute
+  NatwestBankStatementToCsvRoute: typeof NatwestBankStatementToCsvRoute
   PreviewRoute: typeof PreviewRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -361,6 +375,13 @@ declare module '@tanstack/react-router' {
       path: '/icici-bank-statement-to-excel'
       fullPath: '/icici-bank-statement-to-excel'
       preLoaderRoute: typeof IciciBankStatementToExcelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/natwest-bank-statement-to-csv': {
+      id: '/natwest-bank-statement-to-csv'
+      path: '/natwest-bank-statement-to-csv'
+      fullPath: '/natwest-bank-statement-to-csv'
+      preLoaderRoute: typeof NatwestBankStatementToCsvRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/preview': {
@@ -466,6 +487,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExportRoute: ExportRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   IciciBankStatementToExcelRoute: IciciBankStatementToExcelRoute,
+  NatwestBankStatementToCsvRoute: NatwestBankStatementToCsvRoute,
   PreviewRoute: PreviewRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,

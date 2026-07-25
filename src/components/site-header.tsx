@@ -99,6 +99,7 @@ export function SiteFooter() {
             <li><Link to="/bank-statement-to-qif" className="hover:text-ink">Bank statement to QIF</Link></li>
             <li><Link to="/chase-bank-statement-to-excel" className="hover:text-ink">Chase statement to Excel</Link></li>
             <li><Link to="/icici-bank-statement-to-excel" className="hover:text-ink">ICICI statement to Excel</Link></li>
+            <li><Link to="/natwest-bank-statement-to-csv" className="hover:text-ink">NatWest statement to CSV</Link></li>
           </ul>
         </div>
       </div>
