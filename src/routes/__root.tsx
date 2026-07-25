@@ -118,7 +118,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             "@type": "Offer",
             price: "0",
             priceCurrency: "USD",
-            description: "Free tier: unlimited conversions, up to 10 pages per statement.",
+            description: "Free tier: 6 pages per conversion with no signup, or a 10-page lifetime allowance once signed up.",
           },
         }),
       },

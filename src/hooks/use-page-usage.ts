@@ -4,17 +4,18 @@ import { useAuth } from "./use-auth";
 import { SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
 
 /**
- * Real lifetime image-conversion usage, read via the get_image_usage() RPC
- * (see supabase/migrations/20260725_image_usage_lifetime_tracking.sql).
- * Only meaningful once signed in -- anonymous users can't upload images at
- * all (see upload-validation.ts), so there's nothing to show them.
+ * Real lifetime page usage -- PDFs and images combined into one shared
+ * pool (see supabase/migrations/20260725_page_usage_lifetime_tracking.sql
+ * and upload-validation.ts for the full reasoning). Only meaningful once
+ * signed in -- anonymous users aren't tracked at all (no persistent
+ * identity, and PDFs stay per-conversion-only for that tier).
  *
  * Refetches after every successful upload via the `refresh` trigger param,
- * since the count changes server-side (via increment_image_usage) as a
+ * since the count changes server-side (via increment_page_usage) as a
  * side effect of a successful conversion, not something this hook itself
  * controls.
  */
-export function useImageUsage(refreshKey: number) {
+export function usePageUsage(refreshKey: number) {
   const { user } = useAuth();
   const [used, setUsed] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
@@ -27,10 +28,10 @@ export function useImageUsage(refreshKey: number) {
     let cancelled = false;
     setLoading(true);
     // `as never` cast: same temporary workaround as upload-validation.ts --
-    // get_image_usage() isn't in the auto-generated types.ts until the
+    // get_page_usage() isn't in the auto-generated types.ts until the
     // migration is run and types are regenerated. Remove then.
     supabase
-      .rpc("get_image_usage" as never)
+      .rpc("get_page_usage" as never)
       .then(({ data, error }) => {
         if (cancelled) return;
         if (!error && typeof data === "number") setUsed(data);

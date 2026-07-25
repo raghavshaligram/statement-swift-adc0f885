@@ -13,7 +13,7 @@ const FAQ: Array<{ q: string; a: string }> = [
   },
   {
     q: "Is it free?",
-    a: "Yes, for occasional use. Free includes unlimited conversions with a 10-page-per-statement limit. Pro removes the page limit for one flat monthly price — no credits, no per-page fees.",
+    a: "Yes, for occasional use. No signup: unlimited separate conversions, 6 pages each. Sign up free: a 10-page lifetime allowance (PDFs and photos/scans combined). Pro removes the limit entirely for one flat monthly price — no credits, no per-page fees.",
   },
   {
     q: "Which banks and formats are supported?",

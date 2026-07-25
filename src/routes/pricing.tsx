@@ -21,9 +21,8 @@ export const Route = createFileRoute("/pricing")({
 });
 
 const FREE_ROWS: Array<[string, boolean]> = [
-  ["Unlimited conversions", true],
-  ["6 pages per statement, no signup", true],
-  ["10 pages per statement, free signup", true],
+  ["Unlimited conversions with no signup (6 pages each)", true],
+  ["10-page lifetime allowance once signed up", true],
   ["Excel and CSV export", true],
   ["Named detection for 22+ major banks (US, UK, Canada, India) + generic parser for any other bank", true],
   ["100% on-device — nothing ever uploaded", true],
@@ -58,7 +57,7 @@ const COMPARISON_ROWS: Array<{ label: string; values: Record<string, string> }> 
   {
     label: "Free tier",
     values: {
-      ll: "Unlimited conversions, forever — 6 pg (no signup) / 10 pg (signed up)",
+      ll: "6 pg/conversion, no signup, unlimited — or 10 pg lifetime once signed up",
       capy: "10 pages, lifetime pool",
       docu: "None — 14-day / 120-page trial only",
       bsc: "Not specified as permanent",

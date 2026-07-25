@@ -26,7 +26,7 @@ import { BANK_LABELS } from "@/lib/pdf/bank-detection";
 import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
 import { validateUploadBatch } from "@/lib/pdf/upload-validation";
-import { useImageUsage } from "@/hooks/use-image-usage";
+import { usePageUsage } from "@/hooks/use-page-usage";
 import { ANONYMOUS_MAX_PAGES, SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
@@ -38,12 +38,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Convert PDF bank statements to clean Excel spreadsheets on your device. Unlimited pages. Works with Chase, BofA, Wells Fargo, ICICI, HDFC, SBI, Axis, Kotak and more.",
+          "Convert PDF bank statements to clean Excel spreadsheets on your device. Free to try, unlimited pages on Pro. Works with Chase, BofA, Wells Fargo, ICICI, HDFC, SBI, Axis, Kotak and more.",
       },
       { property: "og:title", content: "LedgerLocal — Bank Statement to Excel Software" },
       {
         property: "og:description",
-        content: "100% on-device. Unlimited pages. Real software for real accountants.",
+        content: "100% on-device. Unlimited pages on Pro. Real software for real accountants.",
       },
     ],
   }),
@@ -349,8 +349,8 @@ function Landing() {
                   <span className="text-sm text-muted-foreground">no signup required</span>
                 </div>
                 <p className="mt-3 text-sm text-muted-foreground">
-                  Unlimited conversions, always. Try instantly with no signup (up to {ANONYMOUS_MAX_PAGES} pages
-                  per statement), or sign up free for up to {SIGNED_IN_MAX_PAGES} pages. Excel and CSV export.
+                  Try instantly with no signup — unlimited separate conversions, up to {ANONYMOUS_MAX_PAGES} pages
+                  each. Sign up free for a {SIGNED_IN_MAX_PAGES}-page lifetime allowance. Excel and CSV export.
                 </p>
               </div>
             </ScrollRevealItem>
@@ -429,7 +429,7 @@ function HeroUploadCard() {
   const [, setLiveFileName] = useState("");
   const [pageLimitError, setPageLimitError] = useState<string | null>(null);
   const [usageRefresh, setUsageRefresh] = useState(0);
-  const imageUsage = useImageUsage(usageRefresh);
+  const pageUsage = usePageUsage(usageRefresh);
 
   async function handleFiles(files: File[]) {
     setPageLimitError(null);
@@ -511,10 +511,10 @@ function HeroUploadCard() {
               </Link>
             </div>
           ) : null}
-          {imageUsage.isSignedIn && imageUsage.used !== null && (
+          {pageUsage.isSignedIn && pageUsage.used !== null && (
             <p className="mt-2 px-2 text-center text-xs text-muted-foreground">
-              {imageUsage.used} of {imageUsage.limit} free photo/scan conversions used (lifetime)
-              {imageUsage.used >= imageUsage.limit && (
+              {pageUsage.used} of {pageUsage.limit} free lifetime pages used (PDFs and photos/scans combined)
+              {pageUsage.used >= pageUsage.limit && (
                 <>
                   {" — "}
                   <Link to="/account/billing" className="font-semibold text-emerald underline hover:no-underline">

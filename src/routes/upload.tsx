@@ -7,7 +7,7 @@ import { ParseQueue } from "@/components/parse-queue";
 import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
 import { validateUploadBatch } from "@/lib/pdf/upload-validation";
-import { useImageUsage } from "@/hooks/use-image-usage";
+import { usePageUsage } from "@/hooks/use-page-usage";
 import { ANONYMOUS_MAX_PAGES, SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
 import { useAuth } from "@/hooks/use-auth";
 import { OCR_LANGUAGES } from "@/lib/pdf/ocr-languages";
@@ -31,7 +31,7 @@ function UploadPage() {
   const [pageLimitError, setPageLimitError] = useState<string | null>(null);
   const [ocrLanguage, setOcrLanguage] = useState<string>("eng");
   const [usageRefresh, setUsageRefresh] = useState(0);
-  const imageUsage = useImageUsage(usageRefresh);
+  const pageUsage = usePageUsage(usageRefresh);
 
   const pendingFiles = useStatementStore((s) => s.pendingFiles);
   const setPendingFiles = useStatementStore((s) => s.setPendingFiles);
@@ -107,18 +107,18 @@ function UploadPage() {
           </div>
         )}
 
-        {!showQueue && imageUsage.isSignedIn && imageUsage.used !== null && (
+        {!showQueue && pageUsage.isSignedIn && pageUsage.used !== null && (
           <p className="text-xs text-muted-foreground">
-            {imageUsage.used >= imageUsage.limit ? (
+            {pageUsage.used >= pageUsage.limit ? (
               <span className="text-amber-700">
-                {imageUsage.used} of {imageUsage.limit} free photo/scan conversions used —{" "}
+                {pageUsage.used} of {pageUsage.limit} free lifetime pages used —{" "}
                 <Link to="/account/billing" className="font-semibold underline hover:no-underline">
                   upgrade to Pro
                 </Link>{" "}
                 for unlimited.
               </span>
             ) : (
-              <>{imageUsage.used} of {imageUsage.limit} free photo/scan conversions used (lifetime — PDFs don't count against this).</>
+              <>{pageUsage.used} of {pageUsage.limit} free lifetime pages used (PDFs and photos/scans combined).</>
             )}
           </p>
         )}

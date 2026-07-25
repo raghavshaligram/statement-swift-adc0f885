@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Check, Minus, Zap, CreditCard } from "lucide-react";
 import { AccountShell } from "@/components/account-shell";
-import { useImageUsage } from "@/hooks/use-image-usage";
+import { usePageUsage } from "@/hooks/use-page-usage";
 import { SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
 
 export const Route = createFileRoute("/account/billing")({
@@ -16,8 +16,7 @@ export const Route = createFileRoute("/account/billing")({
 });
 
 const FEATURES = [
-  { label: "Pages per PDF statement", free: `${SIGNED_IN_MAX_PAGES} pages`, pro: "Unlimited" },
-  { label: "Photo/scan conversions", free: `${SIGNED_IN_MAX_PAGES} lifetime`, pro: "Unlimited" },
+  { label: "Pages, lifetime (PDFs + photos/scans combined)", free: `${SIGNED_IN_MAX_PAGES} pages`, pro: "Unlimited" },
   { label: "Excel (.xlsx) export", free: true, pro: true },
   { label: "CSV export", free: true, pro: true },
   { label: "OFX / QIF / QBO / IIF", free: false, pro: true },
@@ -37,15 +36,10 @@ function Cell({ v }: { v: string | boolean }) {
 }
 
 function BillingPage() {
-  const imageUsage = useImageUsage(0);
-  const used = imageUsage.used ?? 0;
-  const cap = imageUsage.limit;
+  const pageUsage = usePageUsage(0);
+  const used = pageUsage.used ?? 0;
+  const cap = pageUsage.limit;
   const pct = Math.min(100, (used / cap) * 100);
-  // Pro price is not yet decided anywhere in this project -- deliberately
-  // NOT inventing a number here (that's exactly the kind of fake data this
-  // page is being fixed to remove). Placeholder until a real price exists.
-  const monthlyPrice: number | null = null;
-
   return (
     <AccountShell
       eyebrow="Account"
@@ -71,17 +65,17 @@ function BillingPage() {
 
         <div className="rounded-2xl border border-border bg-background p-6 shadow-sm">
           <div className="font-mono text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            Photo/scan usage (lifetime)
+            Page usage (lifetime)
           </div>
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-3xl font-bold tracking-tight text-ink">{used}</span>
-            <span className="font-mono text-sm text-muted-foreground">/ {cap} images</span>
+            <span className="font-mono text-sm text-muted-foreground">/ {cap} pages</span>
           </div>
           <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-surface-muted">
             <div className="h-full rounded-full bg-emerald" style={{ width: `${pct}%` }} />
           </div>
           <div className="mt-2 text-xs text-muted-foreground">
-            {Math.max(0, cap - used)} conversions remaining · doesn't reset, ever, on Free — PDF statements aren't counted here at all (unlimited on Free, up to {SIGNED_IN_MAX_PAGES} pages each)
+            {Math.max(0, cap - used)} pages remaining · doesn't reset, ever, on Free — PDF pages and photo/scan conversions draw from this same pool
           </div>
         </div>
       </div>
@@ -97,12 +91,13 @@ function BillingPage() {
           </div>
         </div>
 
-        <div className="mt-5">
-          <span className="font-mono text-lg font-semibold text-ink">Pricing coming soon</span>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Pro checkout isn't live yet — leave your email and we'll notify you the moment it is.
-          </p>
+        <div className="mt-5 flex items-baseline gap-1.5">
+          <span className="font-mono text-4xl font-bold tracking-tight text-ink">$19</span>
+          <span className="font-mono text-sm text-muted-foreground">/ month · flat</span>
         </div>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Checkout isn't live yet — leave your email and we'll notify you the moment it is.
+        </p>
 
         <button className="mt-5 inline-flex h-11 items-center gap-2 rounded-lg bg-emerald px-6 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-emerald/90">
           <Zap className="h-4 w-4" /> Notify me when Pro launches
