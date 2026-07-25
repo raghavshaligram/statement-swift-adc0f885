@@ -5,10 +5,23 @@
  * living separately in two files is what caused two real bugs earlier
  * this session (a stale file-type filter in one location that never got
  * updated when the other one did). One function, one source of truth.
+ *
+ * Image lifetime tracking, added per a real product decision: unlike
+ * PDFs (unlimited separate conversions, each just checked per-file
+ * against the page cap -- no persistent tracking, ever), images use a
+ * LIFETIME cumulative count once signed in, matching CapyParse's actual
+ * real free tier (verified directly this session: "10 pages, lifetime
+ * pool, no expiry"). This is a deliberate difference between the two
+ * input types, not an oversight -- PDFs stay uncapped over time, images
+ * don't. Enforced server-side via a Postgres RPC (increment_image_usage),
+ * not just a client-side check, since a client-only check can't actually
+ * stop someone from calling Supabase directly to bypass it. See the
+ * migration this file's PR/commit references for the actual schema.
  */
 
 import { getPdfPageCount, isPageLimitExempt } from "./extract-text";
 import { ANONYMOUS_MAX_PAGES, SIGNED_IN_MAX_PAGES } from "../pricing-constants";
+import { supabase } from "@/integrations/supabase/client";
 
 const IMAGE_EXT_RE = /\.(jpe?g|png|webp)$/i;
 
@@ -25,20 +38,24 @@ export type UploadValidation =
  * real parsing starts.
  *
  * PDFs: checked per-file, against each PDF's own real page count (a
- * genuinely large single PDF should be blocked on its own).
+ * genuinely large single PDF should be blocked on its own) -- no
+ * persistent tracking across separate uploads, ever.
  *
- * Images: two real gates, not the "always counts as 1, always passes"
- * behavior from before this fix --
+ * Images: three real gates --
  *   1. Mandatory sign-in. Image OCR costs the same to run as scanned-PDF
  *      OCR (the actual justification for gating that category at all,
  *      unlike the free/unlimited format-conversion inputs), so it
  *      shouldn't be free-for-anyone the way it accidentally was.
- *   2. The TOTAL number of images in the batch counts toward the page
- *      limit, summed -- not checked per-file. A per-file check is
- *      meaningless for images (each one is always "1"), so someone
- *      uploading 20 separate photos in one batch would previously have
- *      passed every individual check while clearly exceeding any
- *      reasonable "10 pages" allowance in aggregate.
+ *   2. A real, server-enforced LIFETIME count (increment_image_usage
+ *      RPC), not just a per-batch check -- someone uploading 8 images,
+ *      then another 8 five minutes later, then another 8, should still
+ *      hit the real limit, not reset it by splitting into smaller
+ *      batches. The RPC atomically checks-and-reserves in one call (row
+ *      locked server-side), so two simultaneous uploads from the same
+ *      user (e.g. two open tabs) can't both succeed past the limit.
+ *   3. The RPC call itself also naturally covers "the batch alone
+ *      exceeds what's left" -- no separate per-batch check needed on
+ *      top of it.
  *
  * Format-conversion files (IIF/CSV/OFX/QFX/QIF/MT940) remain fully
  * exempt, per the pricing decision from an earlier session.
@@ -58,12 +75,38 @@ export async function validateUploadBatch(files: File[], isSignedIn: boolean): P
     };
   }
 
-  if (images.length > maxPages) {
-    return {
-      ok: false,
-      requiresSignIn: false,
-      message: `${images.length} images in this batch exceeds your current plan's ${maxPages}-page limit. Upgrade to Pro for no limit.`,
-    };
+  if (images.length > 0) {
+    // Real server-side check: atomically verifies remaining lifetime quota
+    // and reserves it in the same call, rather than trusting a client-side
+    // count that could just be skipped by calling Supabase directly.
+    // `as never` casts below are a temporary type-safety workaround --
+    // this RPC function doesn't exist in the auto-generated types.ts yet
+    // because the migration hasn't been run. Once it's run and types are
+    // regenerated (standard Supabase/Lovable Cloud flow), remove both
+    // `as never` casts and this comment.
+    const { data: allowed, error } = await supabase.rpc("increment_image_usage" as never, {
+      p_count: images.length,
+      p_limit: SIGNED_IN_MAX_PAGES,
+    } as never);
+
+    if (error) {
+      // Fail closed on a real error (not "limit reached", but something
+      // actually broke -- e.g. the migration hasn't been run yet) rather
+      // than silently letting the upload through unchecked.
+      return {
+        ok: false,
+        requiresSignIn: false,
+        message: "Couldn't verify your image conversion quota right now. Please try again in a moment.",
+      };
+    }
+
+    if (!allowed) {
+      return {
+        ok: false,
+        requiresSignIn: false,
+        message: `You've used your free lifetime image conversion allowance (${SIGNED_IN_MAX_PAGES} pages). Upgrade to Pro for unlimited image conversions.`,
+      };
+    }
   }
 
   const pdfs = files.filter((f) => !isImageFile(f) && !isPageLimitExempt(f));
