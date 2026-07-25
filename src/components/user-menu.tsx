@@ -74,18 +74,21 @@ export function AuthActions({ variant = "dark" }: { variant?: Variant }) {
         <DropdownMenuSeparator className="my-0 bg-white/10" />
         <DropdownMenuItem
           onClick={async () => {
-            // Reset directly here, not via a reactive effect elsewhere --
-            // signOut() navigates to "/" right after, which mounts
-            // HeroUploadCard FRESH if the user was on a different page
-            // (e.g. /upload). A fresh mount's own transition-detection
-            // state starts at "not previously signed in", so it never
-            // sees the sign-in -> sign-out transition to react to -- the
-            // real cause of the stale "ready to review" card persisting
-            // after logout. Resetting imperatively, tied directly to the
-            // actual click, sidesteps that entirely.
+            // Navigate FIRST, before awaiting signOut() -- not after.
+            // Real race condition found: Supabase's auth-state listener
+            // can update `user` to null while signOut() is still
+            // in-flight, before this handler's own navigate() call ever
+            // runs. If the user was on /upload, that page (still the
+            // active route at that moment) re-renders in its signed-out
+            // state and is visible for a moment before the navigate()
+            // call finally redirects -- the "flash of the upload screen"
+            // reported directly. Navigating immediately, then signing
+            // out in the background, means the user has already left
+            // the current page before any auth-state re-render can be
+            // seen there.
             resetStatements();
-            await signOut();
             navigate({ to: "/" });
+            await signOut();
           }}
           className="cursor-pointer gap-3 rounded-none px-4 py-3 text-sm font-semibold text-rose-400 focus:bg-rose-500/10 focus:text-rose-300"
         >
