@@ -21,7 +21,7 @@ const FAQ: Array<{ q: string; a: string }> = [
   },
   {
     q: "Does it work with scanned PDFs or photos?",
-    a: "Yes. Scanned PDFs, and JPG/PNG/WEBP photos or screenshots of a statement, all fall back to on-device OCR automatically — no upload, same as everything else. Results depend on image quality: a clear scan or screenshot works well, but a blurry or heavily compressed photo may not read correctly. Always double-check extracted rows before exporting.",
+    a: "Yes, both, using on-device OCR automatically — no upload, same as everything else. Scanned PDFs work the same as any PDF, no signup needed. Uploading a raw photo or screenshot (JPG/PNG/WEBP) requires a free account, since photo OCR costs the same to run as scanning a PDF. Results depend on image quality: a clear scan or screenshot works well, but a blurry or heavily compressed photo may not read correctly. Always double-check extracted rows before exporting.",
   },
   {
     q: "Can I import into QuickBooks?",

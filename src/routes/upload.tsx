@@ -6,7 +6,7 @@ import { StatementDropzone } from "@/components/statement-dropzone";
 import { ParseQueue } from "@/components/parse-queue";
 import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
-import { getStatementPageCount, isPageLimitExempt } from "@/lib/pdf/extract-text";
+import { validateUploadBatch } from "@/lib/pdf/upload-validation";
 import { ANONYMOUS_MAX_PAGES, SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
 import { useAuth } from "@/hooks/use-auth";
 import { OCR_LANGUAGES } from "@/lib/pdf/ocr-languages";
@@ -52,25 +52,9 @@ function UploadPage() {
     if (!arr.length) return;
     setPageLimitError(null);
 
-    // Free-tier page-per-statement check before any real parsing work --
-    // format-conversion files (IIF, and future CSV/OFX/QFX/QIF-as-input)
-    // are exempt entirely, not subject to the same limit as PDF/image
-    // bank-statement parsing. See isPageLimitExempt's own comment for why.
-    const gated = arr.filter((f) => !isPageLimitExempt(f));
-    const pageCounts = await Promise.all(
-      gated.map(async (f) => ({ file: f, pages: await getStatementPageCount(f) }))
-    );
-    const tooLong = pageCounts.filter((p) => p.pages > maxPages);
-    if (tooLong.length > 0) {
-      const first = tooLong[0];
-      const suggestion = user
-        ? "Upgrade to Pro to convert larger statements."
-        : "Sign up free for a higher limit, or upgrade to Pro for no limit at all.";
-      setPageLimitError(
-        tooLong.length === 1
-          ? `${first.file.name} is too large for your current plan. ${suggestion}`
-          : `${tooLong.map((t) => t.file.name).join(", ")} are too large for your current plan. ${suggestion}`
-      );
+    const validation = await validateUploadBatch(arr, !!user);
+    if (!validation.ok) {
+      setPageLimitError(validation.message);
       return;
     }
 

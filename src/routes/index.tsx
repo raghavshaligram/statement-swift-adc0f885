@@ -25,7 +25,7 @@ import { HomepageFaq } from "@/components/homepage-faq";
 import { BANK_LABELS } from "@/lib/pdf/bank-detection";
 import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
-import { getStatementPageCount, isPageLimitExempt } from "@/lib/pdf/extract-text";
+import { validateUploadBatch } from "@/lib/pdf/upload-validation";
 import { ANONYMOUS_MAX_PAGES, SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
@@ -431,24 +431,9 @@ function HeroUploadCard() {
   async function handleFiles(files: File[]) {
     setPageLimitError(null);
 
-    // Real, instant page-count check (PDF metadata only, no text extraction)
-    // before any parsing starts. Format-conversion files (IIF, and future
-    // CSV/OFX/QFX/QIF-as-input) are exempt entirely -- see
-    // isPageLimitExempt's own comment for why.
-    const gated = files.filter((f) => !isPageLimitExempt(f));
-    const pageCounts = await Promise.all(
-      gated.map(async (f) => ({ file: f, pages: await getStatementPageCount(f) }))
-    );
-    const tooLong = pageCounts.filter((p) => p.pages > maxPages);
-    if (tooLong.length > 0) {
-      const suggestion = user
-        ? "Upgrade to Pro to convert larger statements."
-        : "Sign up free for a higher limit, or upgrade to Pro for no limit at all.";
-      setPageLimitError(
-        tooLong.length === 1
-          ? `${tooLong[0].file.name} is too large for your current plan. ${suggestion}`
-          : `${tooLong.map((t) => t.file.name).join(", ")} are too large for your current plan. ${suggestion}`
-      );
+    const validation = await validateUploadBatch(files, !!user);
+    if (!validation.ok) {
+      setPageLimitError(validation.message);
       return;
     }
 
