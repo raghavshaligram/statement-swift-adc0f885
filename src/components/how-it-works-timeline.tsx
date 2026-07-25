@@ -11,25 +11,25 @@ const STEPS = [
   {
     icon: Upload,
     title: "Drop your statement",
-    body: "Drag a bank statement onto the upload area — PDF, scanned, or a photo. Supports multi-page statements from 22+ named banks across the US, UK, Canada, and India, plus a generic parser for any other bank.",
+    body: "Drag a bank statement onto the upload area — PDF, scan, or photo.",
     chip: "Accepted: PDF, JPG, PNG, or WEBP",
   },
   {
     icon: Cpu,
     title: "Parsed on your device",
-    body: "Transactions are extracted using deterministic rules that run entirely in your browser. No network request is made. Nothing leaves your machine.",
+    body: "Transactions are extracted in your browser. Nothing leaves your machine.",
     chip: "Zero bytes sent to any server",
   },
   {
     icon: Eye,
     title: "Review side-by-side",
-    body: "Every extracted row is shown next to the raw source text so you can verify accuracy. Edit anything before you export.",
-    chip: "Hover any row to highlight its source line",
+    body: "Every row is shown next to the raw source text. Edit anything before export.",
+    chip: "Hover a row to highlight its source",
   },
   {
     icon: Download,
     title: "Download your file",
-    body: "Export to Excel, CSV, Tally XML, OFX, QIF, or QBO. Open in your accounting software directly — no reformatting needed.",
+    body: "Export to Excel, CSV, Tally XML, OFX, QIF, or QBO — ready for your accounting software.",
     chip: "6 export formats · Free tier included",
   },
 ];
