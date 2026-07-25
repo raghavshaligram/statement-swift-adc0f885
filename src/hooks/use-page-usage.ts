@@ -27,11 +27,8 @@ export function usePageUsage(refreshKey: number) {
     }
     let cancelled = false;
     setLoading(true);
-    // `as never` cast: same temporary workaround as upload-validation.ts --
-    // get_page_usage() isn't in the auto-generated types.ts until the
-    // migration is run and types are regenerated. Remove then.
     supabase
-      .rpc("get_page_usage" as never)
+      .rpc("get_page_usage")
       .then(({ data, error }) => {
         if (cancelled) return;
         if (!error && typeof data === "number") setUsed(data);

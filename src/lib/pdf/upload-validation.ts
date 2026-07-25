@@ -102,15 +102,10 @@ export async function validateUploadBatch(files: File[], isSignedIn: boolean): P
   // Real server-side check: atomically verifies remaining lifetime quota
   // and reserves it in the same call, rather than trusting a client-side
   // count that could just be skipped by calling Supabase directly.
-  // `as never` casts below are a temporary type-safety workaround -- this
-  // RPC function doesn't exist in the auto-generated types.ts yet because
-  // the migration hasn't been run. Once it's run and types are
-  // regenerated (standard Supabase/Lovable Cloud flow), remove both
-  // `as never` casts and this comment.
-  const { data: allowed, error } = await supabase.rpc("increment_page_usage" as never, {
+  const { data: allowed, error } = await supabase.rpc("increment_page_usage", {
     p_count: totalCost,
     p_limit: SIGNED_IN_MAX_PAGES,
-  } as never);
+  });
 
   if (error) {
     // Fail closed on a real error (not "limit reached", but something

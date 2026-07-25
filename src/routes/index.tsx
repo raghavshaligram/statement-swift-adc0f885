@@ -28,7 +28,7 @@ import { parseStatementFile } from "@/lib/pdf/parse-statement";
 import { validateUploadBatch } from "@/lib/pdf/upload-validation";
 import { usePageUsage } from "@/hooks/use-page-usage";
 import { ANONYMOUS_MAX_PAGES, SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/")({
@@ -430,6 +430,25 @@ function HeroUploadCard() {
   const [pageLimitError, setPageLimitError] = useState<{ message: string; requiresSignIn: boolean } | null>(null);
   const [usageRefresh, setUsageRefresh] = useState(0);
   const pageUsage = usePageUsage(usageRefresh);
+
+  // Reset any leftover processed/queued statement state on an actual
+  // sign-out -- previously, logging out left the widget showing a stale
+  // "Parsing complete, ready to review" card from the signed-in session,
+  // and clicking Review still navigated into the app shell despite no
+  // longer being signed in. Deliberately tracks the SIGNED-IN -> SIGNED-OUT
+  // transition specifically (via a ref), not just "user is currently
+  // null" -- firing on every mount would also wipe legitimate results
+  // when navigating back to the homepage from elsewhere in the app.
+  const wasSignedIn = useRef(false);
+  useEffect(() => {
+    if (user) {
+      wasSignedIn.current = true;
+    } else if (wasSignedIn.current) {
+      wasSignedIn.current = false;
+      reset();
+      setPageLimitError(null);
+    }
+  }, [user]);
 
   async function handleFiles(files: File[]) {
     setPageLimitError(null);

@@ -57,7 +57,7 @@ const COMPARISON_ROWS: Array<{ label: string; values: Record<string, string> }> 
   {
     label: "Free tier",
     values: {
-      ll: "6 pg/conversion, no signup, unlimited — or 10 pg lifetime once signed up",
+      ll: "6 pages/conversion (no signup), 10 pages lifetime (signed up)",
       capy: "10 pages, lifetime pool",
       docu: "None — 14-day / 120-page trial only",
       bsc: "Not specified as permanent",

@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { StatementDropzone } from "@/components/statement-dropzone";
@@ -42,6 +42,23 @@ function UploadPage() {
   const setProgress = useStatementStore((s) => s.setProgress);
   const finishProcessing = useStatementStore((s) => s.finishProcessing);
   const failProcessing = useStatementStore((s) => s.failProcessing);
+
+  // Same reset-on-sign-out fix as HeroUploadCard (index.tsx) -- without
+  // this, logging out while a parsed statement is still showing left the
+  // page in a stale "ready to review" state despite no longer being
+  // signed in. Tracks the actual SIGNED-IN -> SIGNED-OUT transition via a
+  // ref, not just "user is currently null" -- firing on every mount would
+  // also wipe legitimate results when navigating back to this page.
+  const wasSignedIn = useRef(false);
+  useEffect(() => {
+    if (user) {
+      wasSignedIn.current = true;
+    } else if (wasSignedIn.current) {
+      wasSignedIn.current = false;
+      reset();
+      setPageLimitError(null);
+    }
+  }, [user]);
 
   async function handleFiles(list: FileList | File[]) {
     const arr = Array.from(list).filter(
