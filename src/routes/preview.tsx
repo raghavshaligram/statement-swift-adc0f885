@@ -109,6 +109,19 @@ function PreviewPage() {
         {/* Scrollable workspace */}
         <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
           <div className="space-y-3 px-4 py-3 sm:px-5">
+            {statements.some((s) => /\.iif$/i.test(s.fileName)) && (
+              <div className="flex items-center justify-between gap-3 rounded-lg border border-emerald/30 bg-emerald-soft/40 px-4 py-2.5">
+                <span className="text-sm text-accent-foreground">
+                  Also dealing with a bank statement? Convert it to Excel free — no signup for up to 6 pages.
+                </span>
+                <Link
+                  to="/upload"
+                  className="shrink-0 rounded-md bg-emerald px-3 py-1.5 text-xs font-semibold text-primary-foreground transition hover:bg-emerald/90"
+                >
+                  Try it free
+                </Link>
+              </div>
+            )}
 
 
         {/* Shared toolbar: view toggle + search + filters + row count */}

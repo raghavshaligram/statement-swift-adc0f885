@@ -6,7 +6,7 @@ import { StatementDropzone } from "@/components/statement-dropzone";
 import { ParseQueue } from "@/components/parse-queue";
 import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
-import { getStatementPageCount } from "@/lib/pdf/extract-text";
+import { getStatementPageCount, isPageLimitExempt } from "@/lib/pdf/extract-text";
 import { ANONYMOUS_MAX_PAGES, SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
 import { useAuth } from "@/hooks/use-auth";
 import { OCR_LANGUAGES } from "@/lib/pdf/ocr-languages";
@@ -42,14 +42,23 @@ function UploadPage() {
 
   async function handleFiles(list: FileList | File[]) {
     const arr = Array.from(list).filter(
-      (f) => f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf")
+      (f) =>
+        f.type === "application/pdf" ||
+        f.type === "image/jpeg" ||
+        f.type === "image/png" ||
+        f.type === "image/webp" ||
+        /\.(pdf|jpe?g|png|webp|iif)$/i.test(f.name)
     );
     if (!arr.length) return;
     setPageLimitError(null);
 
-    // Free-tier page-per-statement check before any real parsing work.
+    // Free-tier page-per-statement check before any real parsing work --
+    // format-conversion files (IIF, and future CSV/OFX/QFX/QIF-as-input)
+    // are exempt entirely, not subject to the same limit as PDF/image
+    // bank-statement parsing. See isPageLimitExempt's own comment for why.
+    const gated = arr.filter((f) => !isPageLimitExempt(f));
     const pageCounts = await Promise.all(
-      arr.map(async (f) => ({ file: f, pages: await getStatementPageCount(f) }))
+      gated.map(async (f) => ({ file: f, pages: await getStatementPageCount(f) }))
     );
     const tooLong = pageCounts.filter((p) => p.pages > maxPages);
     if (tooLong.length > 0) {

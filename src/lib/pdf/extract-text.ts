@@ -119,3 +119,22 @@ export async function getStatementPageCount(file: File): Promise<number> {
   if (isImage || isIif) return 1;
   return getPdfPageCount(file);
 }
+
+/**
+ * Format-conversion inputs (IIF, and future CSV/OFX/QFX/QIF-as-input) are
+ * deliberately exempt from the free-tier page limit entirely -- not just
+ * "happens to pass because it counts as 1 page." Real competitive research
+ * (checked directly against several dedicated CSV<->QIF/OFX/QBO/IIF
+ * converters) confirms free/unlimited/no-signup is the actual norm for this
+ * category, unlike PDF/image bank-statement parsing (where OCR is
+ * genuinely expensive to run, and CapyParse/DocuClipper's page limits
+ * reflect that real cost). Gating format conversion the same way would
+ * undermine our own "unlimited, no cap" positioning in a category where
+ * competitors are already more generous than a page-limit model allows.
+ * These tools are also meant to work as a free acquisition funnel toward
+ * the actual paid, differentiated product (bank-statement parsing), not to
+ * be gated as their own premium feature.
+ */
+export function isPageLimitExempt(file: File): boolean {
+  return /\.iif$/i.test(file.name);
+}

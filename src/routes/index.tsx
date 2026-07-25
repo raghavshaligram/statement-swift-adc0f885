@@ -25,7 +25,7 @@ import { HomepageFaq } from "@/components/homepage-faq";
 import { BANK_LABELS } from "@/lib/pdf/bank-detection";
 import { useStatementStore } from "@/lib/statement-store";
 import { parseStatementFile } from "@/lib/pdf/parse-statement";
-import { getStatementPageCount } from "@/lib/pdf/extract-text";
+import { getStatementPageCount, isPageLimitExempt } from "@/lib/pdf/extract-text";
 import { ANONYMOUS_MAX_PAGES, SIGNED_IN_MAX_PAGES } from "@/lib/pricing-constants";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
@@ -432,11 +432,12 @@ function HeroUploadCard() {
     setPageLimitError(null);
 
     // Real, instant page-count check (PDF metadata only, no text extraction)
-    // before any parsing starts. This is the actual live homepage upload
-    // widget (HeroUploadCard) -- the "Up to 6 pages" label below the
-    // dropzone had no enforcement behind it at all until this fix.
+    // before any parsing starts. Format-conversion files (IIF, and future
+    // CSV/OFX/QFX/QIF-as-input) are exempt entirely -- see
+    // isPageLimitExempt's own comment for why.
+    const gated = files.filter((f) => !isPageLimitExempt(f));
     const pageCounts = await Promise.all(
-      files.map(async (f) => ({ file: f, pages: await getStatementPageCount(f) }))
+      gated.map(async (f) => ({ file: f, pages: await getStatementPageCount(f) }))
     );
     const tooLong = pageCounts.filter((p) => p.pages > maxPages);
     if (tooLong.length > 0) {
