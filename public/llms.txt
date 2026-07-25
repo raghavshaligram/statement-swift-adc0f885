@@ -1,0 +1,37 @@
+# LedgerLocal
+
+> LedgerLocal is a browser-based bank statement converter that turns PDF bank statements, scanned documents, and photos into Excel, CSV, and other accounting formats — entirely on-device, with no file ever uploaded to a server.
+
+Bank detection: named parsing for 23+ banks across the US, UK, Canada, and India, plus a generic layout parser for any other bank's text-based PDF statement.
+
+Export formats: Excel (.xlsx), CSV, Tally XML, OFX, QIF, QBO, and IIF (QuickBooks Desktop).
+
+Pricing: 6 pages per PDF with no signup required (unlimited separate conversions); a 10-page lifetime allowance (PDF pages and photo/scan conversions combined) once signed up for a free account; unlimited pages and conversions on the paid Pro plan. Structured-file conversions (CSV, IIF, OFX, QFX, QIF, MT940 — see below) do not count against any limit, since they don't require OCR.
+
+Privacy architecture: PDF text extraction, OCR (for scanned pages or photos), and all format conversion run client-side in the browser (pdf.js, tesseract.js) — there is no server-side processing step and no file is ever transmitted.
+
+## Core pages
+
+- [Home](https://ledgerlocal.com/): Product overview, live converter, pricing summary, FAQ.
+- [Pricing](https://ledgerlocal.com/pricing): Full plan comparison, including a feature comparison against CapyParse, DocuClipper, bankstatementconverter.com, and usstatementconverter.com.
+- [Convert a statement](https://ledgerlocal.com/upload): The main upload and conversion tool.
+
+## Bank-specific guides
+
+- [Chase Bank statement to Excel](https://ledgerlocal.com/chase-bank-statement-to-excel)
+- [ICICI Bank statement to Excel](https://ledgerlocal.com/icici-bank-statement-to-excel)
+- [NatWest bank statement to CSV](https://ledgerlocal.com/natwest-bank-statement-to-csv): Also explains NatWest's own native CSV/Excel/OFX export option from online banking, for when that's a faster route than converting a PDF.
+
+## Bank statement export formats
+
+- [Bank statement to Tally XML](https://ledgerlocal.com/bank-statement-to-tally)
+- [Bank statement to OFX](https://ledgerlocal.com/bank-statement-to-ofx)
+- [Bank statement to QIF](https://ledgerlocal.com/bank-statement-to-qif)
+
+## File format converters (no bank statement PDF required)
+
+- [CSV to IIF](https://ledgerlocal.com/csv-to-iif) / [IIF to CSV](https://ledgerlocal.com/iif-to-csv)
+- [CSV to QIF](https://ledgerlocal.com/csv-to-qif) / [QIF to CSV](https://ledgerlocal.com/qif-to-csv)
+- [CSV to OFX](https://ledgerlocal.com/csv-to-ofx) / [OFX to CSV](https://ledgerlocal.com/ofx-to-csv)
+- [QFX to CSV](https://ledgerlocal.com/qfx-to-csv): QFX and OFX are the same underlying format; LedgerLocal reads both.
+- [MT940 to CSV](https://ledgerlocal.com/mt940-to-csv): Read direction only — LedgerLocal does not currently export to MT940.
